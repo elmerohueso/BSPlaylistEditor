@@ -16,5 +16,5 @@ Allows basic management of custom Beat Saber playlists for the Quest and Quest 2
 - SongLoader and PlaylistManager mods (usually installed by default with BMBF)
 
 ## Limitations
-- Only shows songs that have been processed by SongLoad (no built-in or DLC songs)
+- Only shows songs that have been processed by SongLoader (no built-in or DLC songs)
 - Saving a custom playlist that has any built-in or DLC songs will remove them from the playlist
