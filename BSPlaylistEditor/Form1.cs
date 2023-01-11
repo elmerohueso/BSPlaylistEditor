@@ -65,6 +65,8 @@ namespace BSPlaylistEditor
             addSongButton.Enabled = true;
             removeSongButton.Enabled = true;
             saveButton.Enabled = true;
+            newPlaylistButton.Visible = true;
+            newPlaylistButton.Enabled = true;
         }
 
         //Method to return the contents of a file as a string over ADB
@@ -230,21 +232,24 @@ namespace BSPlaylistEditor
             log.Info($"Fetching songs in playlist \"{playlist}\"");
             List<SongModel> songs = new List<SongModel>();
             PlaylistModel playlistModel = allPlaylists.Where(x => x.playlistTitle.ToString() == playlist).FirstOrDefault();
-            foreach (JToken song in playlistModel.songs)
+            if(playlistModel.songs != null)
             {
-                SongModel songModel = new SongModel();
-                SongModel referenceSong = allSongs.Where(x => x.songID.ToLower() == song["hash"].ToString()).FirstOrDefault();
-                //Skip songs that have been deleted but are still referenced by the playlist
-                if (referenceSong == null)
-                    continue;
-                songModel.songID = referenceSong.songID;
-                songModel.songName = referenceSong.songName;
-                songModel.songSubName = referenceSong.songSubName;
-                songModel.songAuthorName = referenceSong.songAuthorName;
-                songModel.levelAuthorName = referenceSong.levelAuthorName;
-                songModel.folderName = referenceSong.folderName;
-                log.Info($"Got data for song \"{songModel.songName}\"");
-                songs.Add(songModel);
+                foreach (JToken song in playlistModel.songs)
+                {
+                    SongModel songModel = new SongModel();
+                    SongModel referenceSong = allSongs.Where(x => x.songID.ToLower() == song["hash"].ToString()).FirstOrDefault();
+                    //Skip songs that have been deleted but are still referenced by the playlist
+                    if (referenceSong == null)
+                        continue;
+                    songModel.songID = referenceSong.songID;
+                    songModel.songName = referenceSong.songName;
+                    songModel.songSubName = referenceSong.songSubName;
+                    songModel.songAuthorName = referenceSong.songAuthorName;
+                    songModel.levelAuthorName = referenceSong.levelAuthorName;
+                    songModel.folderName = referenceSong.folderName;
+                    log.Info($"Got data for song \"{songModel.songName}\"");
+                    songs.Add(songModel);
+                }
             }
             return songs;
         }
@@ -397,6 +402,35 @@ namespace BSPlaylistEditor
         private void playlistGridView_Sorted(object sender, EventArgs e)
         {
             unsavedChanges = true;
+        }
+
+        //Check for unsaved playlist changes before creating a new one
+        private void newPlaylistButton_Click(object sender, EventArgs e)
+        {
+            if (unsavedChanges)
+                savePrompt();
+            newPlaylistPrompt playlistPrompt = new newPlaylistPrompt();
+            if (playlistPrompt.ShowDialog() == DialogResult.OK)
+                createNewPlaylist(playlistPrompt.playlistTitle, playlistPrompt.playlistCoverPath);
+        }
+
+        private void createNewPlaylist(string playlistTitle, string playlistCoverPath)
+        {
+            PlaylistModel playlistModel = new PlaylistModel();
+            log.Info($"Creating new playlist \"{playlistTitle}\"");
+            string fileName = playlistTitle.Replace(" ", "_") + "_BSPlaylistEditor";
+            playlistModel.fileName = fileName + ".json";
+            playlistModel.playlistTitle = playlistTitle;
+            if(playlistCoverPath != null)
+            {
+                byte[] imageArray = File.ReadAllBytes(playlistCoverPath);
+                string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+                playlistModel.imageString = base64ImageRepresentation;
+            }
+            allPlaylists.Add(playlistModel);
+            playlistDropDown.Items.Add(playlistModel);
+            playlistDropDown.SelectedItem = playlistModel;
+            unsavedChanges=true;
         }
     }
 }

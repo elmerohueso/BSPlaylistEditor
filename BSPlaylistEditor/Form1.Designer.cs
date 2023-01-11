@@ -48,6 +48,7 @@
             this.searchBox = new System.Windows.Forms.TextBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.newPlaylistButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.songModelBindingSource)).BeginInit();
@@ -237,11 +238,24 @@
             // 
             this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
             // 
-            // Form1
+            // newPlaylistButton
+            // 
+            this.newPlaylistButton.Enabled = false;
+            this.newPlaylistButton.Location = new System.Drawing.Point(615, 9);
+            this.newPlaylistButton.Name = "newPlaylistButton";
+            this.newPlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.newPlaylistButton.TabIndex = 13;
+            this.newPlaylistButton.Text = "New";
+            this.newPlaylistButton.UseVisualStyleBackColor = true;
+            this.newPlaylistButton.Visible = false;
+            this.newPlaylistButton.Click += new System.EventHandler(this.newPlaylistButton_Click);
+            // 
+            // editorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(788, 456);
+            this.Controls.Add(this.newPlaylistButton);
             this.Controls.Add(this.searchLabel);
             this.Controls.Add(this.searchBox);
             this.Controls.Add(this.saveButton);
@@ -255,7 +269,7 @@
             this.Controls.Add(this.playlistDropDown);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form1";
+            this.Name = "editorForm";
             this.Text = "Simple Playlist Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -280,6 +294,7 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.TextBox searchBox;
         private System.Windows.Forms.Label searchLabel;
+        private System.Windows.Forms.Button newPlaylistButton;
     }
 }
 
