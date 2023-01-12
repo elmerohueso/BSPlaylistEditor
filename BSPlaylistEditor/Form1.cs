@@ -56,10 +56,9 @@ namespace BSPlaylistEditor
             playlistDropDown.Visible = true;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             await Task.Run(() => getPlaylistsFromAdb());
-            foreach (PlaylistModel playlist in allPlaylists)
-            {
-                playlistDropDown.Items.Add(playlist);
-            }
+            BindingSource comboboxSource = new BindingSource();
+            comboboxSource.DataSource = allPlaylists;
+            playlistDropDown.DataSource = comboboxSource;
             playlistDropDown.DisplayMember = "playlistTitle";
             playlistDropDown.SelectedIndex = 0;
             playlistProgressBar.MarqueeAnimationSpeed = 0;
@@ -380,8 +379,9 @@ namespace BSPlaylistEditor
             JObject playlistJSON = new JObject();
             playlistJSON.Add("playlistTitle", selectedPlayList.playlistTitle);
             playlistJSON.Add("songs", songsJSON);
-            if(selectedPlayList.imageString.Length > 0)
-                playlistJSON.Add("imageString", selectedPlayList.imageString);
+            if(selectedPlayList.imageString != null)
+                if(selectedPlayList.imageString.Length > 0)
+                    playlistJSON.Add("imageString", selectedPlayList.imageString);
             //Write the playlist to the local copy and push it to the headset
             string source = Path.Combine(localPlaylistFolder, selectedPlayList.fileName);
             string destination = devicePlaylistFolder + "/" + selectedPlayList.fileName;
@@ -445,7 +445,9 @@ namespace BSPlaylistEditor
                 playlistModel.imageString = base64ImageRepresentation;
             }
             allPlaylists.Add(playlistModel);
-            playlistDropDown.Items.Add(playlistModel);
+            BindingSource comboboxSource = new BindingSource();
+            comboboxSource.DataSource = allPlaylists;
+            playlistDropDown.DataSource = comboboxSource;
             playlistDropDown.SelectedItem = playlistModel;
             unsavedChanges=true;
         }
