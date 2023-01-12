@@ -47,10 +47,12 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.searchBox = new System.Windows.Forms.TextBox();
             this.searchLabel = new System.Windows.Forms.Label();
-            this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.newPlaylistButton = new System.Windows.Forms.Button();
+            this.playlistCoverPreview = new System.Windows.Forms.PictureBox();
+            this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.songModelBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -234,10 +236,6 @@
             this.searchLabel.Text = "Search";
             this.searchLabel.Visible = false;
             // 
-            // songModelBindingSource
-            // 
-            this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
-            // 
             // newPlaylistButton
             // 
             this.newPlaylistButton.Enabled = false;
@@ -250,11 +248,26 @@
             this.newPlaylistButton.Visible = false;
             this.newPlaylistButton.Click += new System.EventHandler(this.newPlaylistButton_Click);
             // 
+            // playlistCoverPreview
+            // 
+            this.playlistCoverPreview.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.playlistCoverPreview.Location = new System.Drawing.Point(783, 34);
+            this.playlistCoverPreview.Name = "playlistCoverPreview";
+            this.playlistCoverPreview.Size = new System.Drawing.Size(100, 100);
+            this.playlistCoverPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.playlistCoverPreview.TabIndex = 14;
+            this.playlistCoverPreview.TabStop = false;
+            // 
+            // songModelBindingSource
+            // 
+            this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
+            // 
             // editorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(788, 456);
+            this.ClientSize = new System.Drawing.Size(897, 456);
+            this.Controls.Add(this.playlistCoverPreview);
             this.Controls.Add(this.newPlaylistButton);
             this.Controls.Add(this.searchLabel);
             this.Controls.Add(this.searchBox);
@@ -275,6 +288,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPreview)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.songModelBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -295,6 +309,7 @@
         private System.Windows.Forms.TextBox searchBox;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.Button newPlaylistButton;
+        private System.Windows.Forms.PictureBox playlistCoverPreview;
     }
 }
 

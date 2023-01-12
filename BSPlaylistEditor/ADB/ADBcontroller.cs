@@ -51,11 +51,29 @@ namespace BSPlaylistEditor.ADB
             }
         }
 
+        //Method to start ADB
+        public static void startADB()
+        {
+            //Make sure adb.exe exists before starting it
+            if (adbPath == "")
+                extractADB();
+            ADBcontroller adb = new ADBcontroller();
+            adb.output = false;
+            adb.command = $"start-server";
+            adb.runCommand();
+        }
+
+        //Method to stop ADB
+        public static void stopADB()
+        {
+            ADBcontroller adb = new ADBcontroller();
+            adb.output = false;
+            adb.command = $"kill-server";
+            adb.runCommand();
+        }
+
         public string runCommand()
         {
-            //Make sure adb.exe exists before running commands
-            if(adbPath == "")
-                extractADB();
             string output = "";
             Process process = new Process();
             process.StartInfo = new ProcessStartInfo();

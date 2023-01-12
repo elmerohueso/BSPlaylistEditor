@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Data;
 using BSPlaylistEditor.ADB;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace BSPlaylistEditor
 {
@@ -37,10 +38,12 @@ namespace BSPlaylistEditor
 
         private async void Form1_Load(object sender, EventArgs e)
         {
+            log.Info("Starting ADB");
+            ADBcontroller.startADB();
             log.Info("Form loaded");
             //Fetch all custom songs and populate the left grid
             allSongsProgressBar.MarqueeAnimationSpeed = 60;
-            allSongsTable = await Task.Run(() => songsToDataTable("All Songs"));
+            allSongsTable = await Task.Run(() => songsToDataTable(null));
             allSongsGridView.DataSource = allSongsTable;
             allSongsGridView.Columns["songID"].Visible = false;
             allSongsGridView.Sort(allSongsGridView.Columns["Song Name"], ListSortDirection.Ascending);
@@ -143,8 +146,9 @@ namespace BSPlaylistEditor
             playlistProgressBar.Visible = true;
             playlistDropDown.Enabled = false;
             saveButton.Enabled = false;
-            string selectedPlaylist = playlistDropDown.Text;
+            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
             playlistTable = await Task.Run(() => songsToDataTable(selectedPlaylist));
+            playlistCoverPreview.Image = await Task.Run(() => getPlaylistCover(selectedPlaylist)); ;
             playlistGridView.DataSource = playlistTable;
             playlistGridView.Columns["songID"].Visible = false;
             playlistProgressBar.MarqueeAnimationSpeed = 0;
@@ -154,11 +158,11 @@ namespace BSPlaylistEditor
         }
 
         //Add songs to DataTables used to populate the grids
-        private DataTable songsToDataTable(string playlist)
+        private DataTable songsToDataTable(PlaylistModel playlist)
         {
             log.Info($"Preparing songs from \"{playlist}\" to populate the grid");
             List<SongModel> songList = new List<SongModel>();
-            if (playlist == "All Songs")
+            if (playlist == null)
             {
                 if (allSongs.Count == 0)
                     getAllSongsFromAdb();
@@ -225,16 +229,13 @@ namespace BSPlaylistEditor
             }
         }
 
-        //Playlists only contain song names and hashes, so we have to match them with allSongs
-        //to get all other information needed to build SongModel objects to populate the grid
-        private List<SongModel> getSongsFromPlaylist(string playlist)
+        private List<SongModel> getSongsFromPlaylist(PlaylistModel playlist)
         {
             log.Info($"Fetching songs in playlist \"{playlist}\"");
             List<SongModel> songs = new List<SongModel>();
-            PlaylistModel playlistModel = allPlaylists.Where(x => x.playlistTitle.ToString() == playlist).FirstOrDefault();
-            if(playlistModel.songs != null)
+            if (playlist.songs != null)
             {
-                foreach (JToken song in playlistModel.songs)
+                foreach (JToken song in playlist.songs)
                 {
                     SongModel songModel = new SongModel();
                     SongModel referenceSong = allSongs.Where(x => x.songID.ToLower() == song["hash"].ToString()).FirstOrDefault();
@@ -252,6 +253,19 @@ namespace BSPlaylistEditor
                 }
             }
             return songs;
+        }
+
+        private Image getPlaylistCover(PlaylistModel playlist)
+        {
+            log.Info($"Fetching cover from playlist \"{playlist}\"");
+            Image playlistCoverImage = null;
+            if(playlist.imageString != null)
+            {
+                byte[] playlistCoverBytes = Convert.FromBase64String(playlist.imageString);
+                MemoryStream memoryStream = new MemoryStream(playlistCoverBytes);
+                playlistCoverImage = Image.FromStream(memoryStream);
+            }
+            return playlistCoverImage;
         }
 
         //This method isn't currently used, but can be used to generate the SHA1 hash for a custom song
@@ -382,7 +396,10 @@ namespace BSPlaylistEditor
         {
             if (unsavedChanges)
                 savePrompt();
+            log.Info("Deleting temporary files");
             Directory.Delete(Path.Combine(Directory.GetCurrentDirectory(), "temp"), true);
+            log.Info("Stopping ADB");
+            ADBcontroller.stopADB();
         }
 
         //Check for unsaved playlist changes when changing the selected playlist
