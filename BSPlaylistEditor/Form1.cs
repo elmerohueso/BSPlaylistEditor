@@ -56,9 +56,10 @@ namespace BSPlaylistEditor
             playlistDropDown.Visible = true;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             await Task.Run(() => getPlaylistsFromAdb());
-            BindingSource comboboxSource = new BindingSource();
-            comboboxSource.DataSource = allPlaylists;
-            playlistDropDown.DataSource = comboboxSource;
+            foreach (PlaylistModel playlist in allPlaylists)
+            {
+                playlistDropDown.Items.Add(playlist);
+            }
             playlistDropDown.DisplayMember = "playlistTitle";
             playlistDropDown.SelectedIndex = 0;
             playlistProgressBar.MarqueeAnimationSpeed = 0;
@@ -445,9 +446,7 @@ namespace BSPlaylistEditor
                 playlistModel.imageString = base64ImageRepresentation;
             }
             allPlaylists.Add(playlistModel);
-            BindingSource comboboxSource = new BindingSource();
-            comboboxSource.DataSource = allPlaylists;
-            playlistDropDown.DataSource = comboboxSource;
+            playlistDropDown.Items.Add(playlistModel);
             playlistDropDown.SelectedItem = playlistModel;
             unsavedChanges=true;
         }
