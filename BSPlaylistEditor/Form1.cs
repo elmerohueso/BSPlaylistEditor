@@ -54,6 +54,7 @@ namespace BSPlaylistEditor
 
             //Fetch all custom playlists and populate the right grid with the first playlist
             playlistDropDown.Visible = true;
+            playlistProgressBar.Visible = true;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             await Task.Run(() => getPlaylistsFromAdb());
             foreach (PlaylistModel playlist in allPlaylists)
@@ -70,6 +71,10 @@ namespace BSPlaylistEditor
             saveButton.Enabled = true;
             newPlaylistButton.Visible = true;
             newPlaylistButton.Enabled = true;
+            saveButton.Visible = true;
+            saveButton.Enabled = true;
+            deleteButton.Visible = true;
+            deleteButton.Enabled = true;
         }
 
         //Method to return the contents of a file as a string over ADB
@@ -442,11 +447,17 @@ namespace BSPlaylistEditor
         private async void refreshPlaylistGrid()
         {
             if (playlistDropDown.Text.Length == 0)
+            {
+                playlistGridView.DataSource = null;
+                playlistCoverPreview.Image = null;
                 return;
+            }
+            saveButton.Visible = false;
+            deleteButton.Visible = false;
+            newPlaylistButton.Visible=false;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             playlistProgressBar.Visible = true;
             playlistDropDown.Enabled = false;
-            saveButton.Enabled = false;
             PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
             playlistTable = await Task.Run(() => songsToDataTable(selectedPlaylist));
             playlistCoverPreview.Image = await Task.Run(() => getPlaylistCover(selectedPlaylist)); ;
@@ -455,7 +466,9 @@ namespace BSPlaylistEditor
             playlistProgressBar.MarqueeAnimationSpeed = 0;
             playlistProgressBar.Visible = false;
             playlistDropDown.Enabled = true;
-            saveButton.Enabled = true;
+            saveButton.Visible = true;
+            deleteButton.Visible = true;
+            newPlaylistButton.Visible = true;
         }
 
         private void discardChangesPrompt()
@@ -466,6 +479,33 @@ namespace BSPlaylistEditor
                 refreshPlaylistGrid();
                 unsavedChanges = false;
             }
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            if(playlistDropDown.SelectedItem != null)
+            {
+                PlaylistModel playlist = playlistDropDown.SelectedItem as PlaylistModel;
+                deletePlaylist(playlist);
+            }
+        }
+
+        private void deletePlaylist(PlaylistModel playlist)
+        {
+            string playlistPath = devicePlaylistFolder + "/" + playlist.fileName;
+            deleteFileOverADB(playlistPath);
+            allPlaylists.Remove(playlist);
+            playlistDropDown.Items.Remove(playlist);
+            refreshPlaylistGrid();
+        }
+
+        private void deleteFileOverADB(string filePath)
+        {
+            log.Info($"Deleting \"{filePath}\" over ADB");
+            ADBcontroller adb = new ADBcontroller();
+            adb.output = false;
+            adb.command = $"shell rm \"{filePath}\"";
+            adb.runCommand();
         }
     }
 }
