@@ -138,23 +138,11 @@ namespace BSPlaylistEditor
 
 
         //Monitor the playlist dropdown and update the right grid
-        private async void playlistDropDown_SelectedIndexChanged(object sender, EventArgs e)
+        private void playlistDropDown_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (playlistDropDown.Text.Length == 0)
                 return;
-            playlistProgressBar.MarqueeAnimationSpeed = 60;
-            playlistProgressBar.Visible = true;
-            playlistDropDown.Enabled = false;
-            saveButton.Enabled = false;
-            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
-            playlistTable = await Task.Run(() => songsToDataTable(selectedPlaylist));
-            playlistCoverPreview.Image = await Task.Run(() => getPlaylistCover(selectedPlaylist)); ;
-            playlistGridView.DataSource = playlistTable;
-            playlistGridView.Columns["songID"].Visible = false;
-            playlistProgressBar.MarqueeAnimationSpeed = 0;
-            playlistProgressBar.Visible = false;
-            playlistDropDown.Enabled = true;
-            saveButton.Enabled = true;
+            refreshPlaylistGrid();
         }
 
         //Add songs to DataTables used to populate the grids
@@ -357,13 +345,13 @@ namespace BSPlaylistEditor
             DialogResult dialog = MessageBox.Show($"Save changes to playlist \"{playlistDropDown.Text}\"?", "Save Changes?", MessageBoxButtons.YesNo);
             if (dialog == DialogResult.Yes)
             {
-                dataTableToPlaylist();
+                savePlaylist();
                 unsavedChanges = false;
             }
         }
 
         //Writes the playlist, as displayed, to file and them pushes it via ADB
-        private void dataTableToPlaylist()
+        private void savePlaylist()
         {
             //Format the selected playlist appropriately
             PlaylistModel selectedPlayList = playlistDropDown.SelectedItem as PlaylistModel;
@@ -407,7 +395,7 @@ namespace BSPlaylistEditor
         private void playlistDropDown_Click(object sender, EventArgs e)
         {
             if(unsavedChanges)
-                savePrompt();
+                discardChangesPrompt();
         }
 
         //Searches all fields in the All Songs list
@@ -448,7 +436,36 @@ namespace BSPlaylistEditor
             allPlaylists.Add(playlistModel);
             playlistDropDown.Items.Add(playlistModel);
             playlistDropDown.SelectedItem = playlistModel;
-            unsavedChanges=true;
+            savePlaylist();
+        }
+
+        private async void refreshPlaylistGrid()
+        {
+            if (playlistDropDown.Text.Length == 0)
+                return;
+            playlistProgressBar.MarqueeAnimationSpeed = 60;
+            playlistProgressBar.Visible = true;
+            playlistDropDown.Enabled = false;
+            saveButton.Enabled = false;
+            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
+            playlistTable = await Task.Run(() => songsToDataTable(selectedPlaylist));
+            playlistCoverPreview.Image = await Task.Run(() => getPlaylistCover(selectedPlaylist)); ;
+            playlistGridView.DataSource = playlistTable;
+            playlistGridView.Columns["songID"].Visible = false;
+            playlistProgressBar.MarqueeAnimationSpeed = 0;
+            playlistProgressBar.Visible = false;
+            playlistDropDown.Enabled = true;
+            saveButton.Enabled = true;
+        }
+
+        private void discardChangesPrompt()
+        {
+            DialogResult dialog = MessageBox.Show($"Discard changes to playlist \"{playlistDropDown.Text}\"?", "Discard Changes?", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+                refreshPlaylistGrid();
+                unsavedChanges = false;
+            }
         }
     }
 }
