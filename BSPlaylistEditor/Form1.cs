@@ -514,6 +514,8 @@ namespace BSPlaylistEditor
 
         private void deletePlaylist(PlaylistModel playlist)
         {
+            string tempPlaylistPath = Path.Combine(localPlaylistFolder, playlist.fileName);
+            File.Delete(tempPlaylistPath);
             string playlistPath = devicePlaylistFolder + "/" + playlist.fileName;
             deleteFileOverADB(playlistPath);
             allPlaylists.Remove(playlist);
