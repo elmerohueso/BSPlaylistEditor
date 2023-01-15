@@ -371,19 +371,25 @@ namespace BSPlaylistEditor
                 songJSON.Add("songName", song.Cells["Song Name"].Value.ToString());
                 songsJSON.Add(songJSON);
             }
-            JObject playlistJSON = new JObject();
-            playlistJSON.Add("playlistTitle", selectedPlayList.playlistTitle);
-            playlistJSON.Add("songs", songsJSON);
-            if(selectedPlayList.imageString != null)
-                if(selectedPlayList.imageString.Length > 0)
-                    playlistJSON.Add("imageString", selectedPlayList.imageString);
-            //Write the playlist to the local copy and push it to the headset
-            string source = Path.Combine(localPlaylistFolder, selectedPlayList.fileName);
-            string destination = devicePlaylistFolder + "/" + selectedPlayList.fileName;
-            File.WriteAllText(source, playlistJSON.ToString());
-            pushFileToADB(source, destination);
+            selectedPlayList.songs = songsJSON;
+            playlistToJson(selectedPlayList);
             //Refresh the playlists
             getAllPlaylists();
+        }
+
+        private void playlistToJson(PlaylistModel playlist)
+        {
+            JObject playlistJSON = new JObject();
+            playlistJSON.Add("playlistTitle", playlist.playlistTitle);
+            playlistJSON.Add("songs", playlist.songs);
+            if (playlist.imageString != null)
+                if (playlist.imageString.Length > 0)
+                    playlistJSON.Add("imageString", playlist.imageString);
+            //Write the playlist to the local copy and push it to the headset
+            string source = Path.Combine(localPlaylistFolder, playlist.fileName);
+            string destination = devicePlaylistFolder + "/" + playlist.fileName;
+            File.WriteAllText(source, playlistJSON.ToString());
+            pushFileToADB(source, destination);
         }
 
         //Check for unsaved playlist changes when closing the application
