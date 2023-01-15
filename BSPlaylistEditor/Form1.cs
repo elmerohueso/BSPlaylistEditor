@@ -30,6 +30,17 @@ namespace BSPlaylistEditor
         private DataTable allSongsTable = new DataTable(); //DataTable to drive the left grid
         private DataTable playlistTable = new DataTable(); //DataTable to drive the right grid
         private bool unsavedChanges = false; //Track whether changes have been made to the selected playlist
+        private bool UnsavedChanges {
+            get
+            {
+                return unsavedChanges;
+            }
+            set
+            {
+                unsavedChanges = value;
+                savePlaylistButton.Enabled = value;
+            }
+        }
 
         public editorForm()
         {
@@ -68,13 +79,12 @@ namespace BSPlaylistEditor
             playlistDropDown.Enabled = true;
             addSongButton.Enabled = true;
             removeSongButton.Enabled = true;
-            saveButton.Enabled = true;
             newPlaylistButton.Visible = true;
             newPlaylistButton.Enabled = true;
-            saveButton.Visible = true;
-            saveButton.Enabled = true;
-            deleteButton.Visible = true;
-            deleteButton.Enabled = true;
+            savePlaylistButton.Visible = true;
+            savePlaylistButton.Enabled = false;
+            deletePlaylistButton.Visible = true;
+            deletePlaylistButton.Enabled = true;
         }
 
         //Method to return the contents of a file as a string over ADB
@@ -303,7 +313,7 @@ namespace BSPlaylistEditor
                 DataRow dataRow = ((DataRowView)row.DataBoundItem).Row;
                 playlistTable.Rows.Add(dataRow.ItemArray);
             }
-            unsavedChanges = true;
+            UnsavedChanges = true;
         }
 
         //Controls removing songs from a playlist
@@ -316,7 +326,7 @@ namespace BSPlaylistEditor
                 DataRow dataRow = ((DataRowView)row.DataBoundItem).Row;
                 playlistTable.Rows.Remove(dataRow);
             }
-            unsavedChanges = true;
+            UnsavedChanges = true;
         }
 
         //Returns the selected rows in the appropriate grid based on which button is pressed
@@ -342,7 +352,7 @@ namespace BSPlaylistEditor
         private void saveButton_Click(object sender, EventArgs e)
         {
             savePlaylist();
-            unsavedChanges = false;
+            UnsavedChanges = false;
         }
 
         //Prompts to save the playlist changes
@@ -352,7 +362,7 @@ namespace BSPlaylistEditor
             if (dialog == DialogResult.Yes)
             {
                 savePlaylist();
-                unsavedChanges = false;
+                UnsavedChanges = false;
             }
         }
 
@@ -395,7 +405,7 @@ namespace BSPlaylistEditor
         //Check for unsaved playlist changes when closing the application
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (unsavedChanges)
+            if (UnsavedChanges)
                 savePrompt();
             log.Info("Deleting temporary files");
             Directory.Delete(Path.Combine(Directory.GetCurrentDirectory(), "temp"), true);
@@ -406,7 +416,7 @@ namespace BSPlaylistEditor
         //Check for unsaved playlist changes when changing the selected playlist
         private void playlistDropDown_Click(object sender, EventArgs e)
         {
-            if(unsavedChanges)
+            if(UnsavedChanges)
                 discardChangesPrompt();
         }
 
@@ -419,13 +429,13 @@ namespace BSPlaylistEditor
         //Saving a playlist preserves sorting, so make sure we report that as a pending change
         private void playlistGridView_Sorted(object sender, EventArgs e)
         {
-            unsavedChanges = true;
+            UnsavedChanges = true;
         }
 
         //Check for unsaved playlist changes before creating a new one
         private void newPlaylistButton_Click(object sender, EventArgs e)
         {
-            if (unsavedChanges)
+            if (UnsavedChanges)
                 savePrompt();
             newPlaylistPrompt playlistPrompt = new newPlaylistPrompt();
             if (playlistPrompt.ShowDialog() == DialogResult.OK)
@@ -460,8 +470,8 @@ namespace BSPlaylistEditor
                 playlistCoverPreview.Image = null;
                 return;
             }
-            saveButton.Visible = false;
-            deleteButton.Visible = false;
+            savePlaylistButton.Visible = false;
+            deletePlaylistButton.Visible = false;
             newPlaylistButton.Visible=false;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             playlistProgressBar.Visible = true;
@@ -474,8 +484,8 @@ namespace BSPlaylistEditor
             playlistProgressBar.MarqueeAnimationSpeed = 0;
             playlistProgressBar.Visible = false;
             playlistDropDown.Enabled = true;
-            saveButton.Visible = true;
-            deleteButton.Visible = true;
+            savePlaylistButton.Visible = true;
+            deletePlaylistButton.Visible = true;
             newPlaylistButton.Visible = true;
         }
 
@@ -485,7 +495,7 @@ namespace BSPlaylistEditor
             if (dialog == DialogResult.Yes)
             {
                 refreshPlaylistGrid();
-                unsavedChanges = false;
+                UnsavedChanges = false;
             }
         }
 

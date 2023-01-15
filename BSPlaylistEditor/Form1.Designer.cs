@@ -44,13 +44,13 @@
             this.playlistProgressBar = new System.Windows.Forms.ProgressBar();
             this.addSongButton = new System.Windows.Forms.Button();
             this.removeSongButton = new System.Windows.Forms.Button();
-            this.saveButton = new System.Windows.Forms.Button();
+            this.savePlaylistButton = new System.Windows.Forms.Button();
             this.searchBox = new System.Windows.Forms.TextBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.newPlaylistButton = new System.Windows.Forms.Button();
             this.playlistCoverPreview = new System.Windows.Forms.PictureBox();
             this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.deleteButton = new System.Windows.Forms.Button();
+            this.deletePlaylistButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPreview)).BeginInit();
@@ -207,17 +207,17 @@
             this.removeSongButton.UseVisualStyleBackColor = true;
             this.removeSongButton.Click += new System.EventHandler(this.removeSongButton_Click);
             // 
-            // saveButton
+            // savePlaylistButton
             // 
-            this.saveButton.Enabled = false;
-            this.saveButton.Location = new System.Drawing.Point(679, 7);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 10;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Visible = false;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            this.savePlaylistButton.Enabled = false;
+            this.savePlaylistButton.Location = new System.Drawing.Point(679, 7);
+            this.savePlaylistButton.Name = "savePlaylistButton";
+            this.savePlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.savePlaylistButton.TabIndex = 10;
+            this.savePlaylistButton.Text = "Save";
+            this.savePlaylistButton.UseVisualStyleBackColor = true;
+            this.savePlaylistButton.Visible = false;
+            this.savePlaylistButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // searchBox
             // 
@@ -264,29 +264,29 @@
             // 
             this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
             // 
-            // deleteButton
+            // deletePlaylistButton
             // 
-            this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(598, 7);
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(75, 23);
-            this.deleteButton.TabIndex = 15;
-            this.deleteButton.Text = "Delete";
-            this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Visible = false;
-            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            this.deletePlaylistButton.Enabled = false;
+            this.deletePlaylistButton.Location = new System.Drawing.Point(598, 7);
+            this.deletePlaylistButton.Name = "deletePlaylistButton";
+            this.deletePlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.deletePlaylistButton.TabIndex = 15;
+            this.deletePlaylistButton.Text = "Delete";
+            this.deletePlaylistButton.UseVisualStyleBackColor = true;
+            this.deletePlaylistButton.Visible = false;
+            this.deletePlaylistButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // editorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(897, 456);
-            this.Controls.Add(this.deleteButton);
+            this.Controls.Add(this.deletePlaylistButton);
             this.Controls.Add(this.playlistCoverPreview);
             this.Controls.Add(this.newPlaylistButton);
             this.Controls.Add(this.searchLabel);
             this.Controls.Add(this.searchBox);
-            this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.savePlaylistButton);
             this.Controls.Add(this.removeSongButton);
             this.Controls.Add(this.addSongButton);
             this.Controls.Add(this.playlistProgressBar);
@@ -320,12 +320,12 @@
         private System.Windows.Forms.ProgressBar playlistProgressBar;
         private System.Windows.Forms.Button addSongButton;
         private System.Windows.Forms.Button removeSongButton;
-        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button savePlaylistButton;
         private System.Windows.Forms.TextBox searchBox;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.Button newPlaylistButton;
         private System.Windows.Forms.PictureBox playlistCoverPreview;
-        private System.Windows.Forms.Button deleteButton;
+        private System.Windows.Forms.Button deletePlaylistButton;
     }
 }
 
