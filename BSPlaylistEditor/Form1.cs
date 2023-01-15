@@ -15,6 +15,7 @@ using System.Data;
 using BSPlaylistEditor.ADB;
 using System.ComponentModel;
 using System.Drawing;
+using System.Configuration;
 
 namespace BSPlaylistEditor
 {
@@ -49,6 +50,8 @@ namespace BSPlaylistEditor
 
         private async void Form1_Load(object sender, EventArgs e)
         {
+            string backupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BSPlayistEditorBackups");
+            writeConfigValue("backupFolder", backupFolder,false);
             log.Info("Starting ADB");
             ADBcontroller.startADB();
             log.Info("Form loaded");
@@ -127,11 +130,11 @@ namespace BSPlaylistEditor
         {
             log.Info($"Storing all playlists locally");
             localPlaylistFolder = pullFolderContentsFromADB(devicePlaylistFolder);
-            getAllPlaylists();
+            parseAllPlaylists();
         }
 
         //Parse the playlist JSON files into PlaylistModel objects and add them to the list of playlists
-        private void getAllPlaylists()
+        private void parseAllPlaylists()
         {
             log.Info($"Parsing all playlists");
             allPlaylists = new List<PlaylistModel>();
@@ -374,6 +377,7 @@ namespace BSPlaylistEditor
         //Writes the playlist, as displayed, to file and them pushes it via ADB
         private void savePlaylist(PlaylistModel playlist)
         {
+            backupPlaylist(playlist);
             log.Info($"Saving changes to \"{playlist.fileName}\"");
             JArray songsJSON = new JArray();
             //Reading the songs from the DataGridView instead of the DataTable preserves sorting
@@ -387,7 +391,7 @@ namespace BSPlaylistEditor
             playlist.songs = songsJSON;
             playlistToJson(playlist);
             //Refresh the playlists
-            getAllPlaylists();
+            parseAllPlaylists();
         }
 
         private void playlistToJson(PlaylistModel playlist)
@@ -529,6 +533,38 @@ namespace BSPlaylistEditor
             adb.output = false;
             adb.command = $"shell rm \"{filePath}\"";
             adb.runCommand();
+        }
+        public void writeConfigValue(string key, string value, bool overwrite)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            if (config.AppSettings.Settings[key] != null && overwrite)
+                config.AppSettings.Settings[key].Value = value;
+            else
+                config.AppSettings.Settings.Add(key, value);
+            config.Save(ConfigurationSaveMode.Modified);
+        }
+
+        public string readConfigValue(string key)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
+            if (config.AppSettings.Settings[key] != null)
+                return config.AppSettings.Settings[key].Value;
+            else
+                return null;
+        }
+        public void backupPlaylist(PlaylistModel playlist)
+        {
+            string backupFolder = readConfigValue("backupFolder");
+            Directory.CreateDirectory(backupFolder);
+            string timeStamp = DateTime.Now.ToString("_yyyyMMdd_HHmmss");
+            string fileName = playlist.playlistTitle.Replace(" ", "_") + "_backup" + timeStamp + ".json";
+            string source = Path.Combine(localPlaylistFolder, playlist.fileName);
+            string destination = Path.Combine(backupFolder, fileName);
+            if (File.Exists(source))
+            {
+                log.Info($"Backing up playlist \"{playlist.playlistTitle}\" to \"{destination}\"");
+                File.Copy(source, destination, true);
+            }
         }
     }
 }
