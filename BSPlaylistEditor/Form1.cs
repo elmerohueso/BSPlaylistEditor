@@ -341,7 +341,8 @@ namespace BSPlaylistEditor
         //Controls the Save button
         private void saveButton_Click(object sender, EventArgs e)
         {
-            savePrompt();
+            savePlaylist();
+            unsavedChanges = false;
         }
 
         //Prompts to save the playlist changes
