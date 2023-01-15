@@ -157,7 +157,8 @@ namespace BSPlaylistEditor
         {
             if (playlistDropDown.Text.Length == 0)
                 return;
-            refreshPlaylistGrid();
+            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
+            updatePlaylistGrid(selectedPlaylist);
         }
 
         //Add songs to DataTables used to populate the grids
@@ -351,7 +352,9 @@ namespace BSPlaylistEditor
         //Controls the Save button
         private void saveButton_Click(object sender, EventArgs e)
         {
-            savePlaylist();
+            //Format the selected playlist appropriately
+            PlaylistModel selectedPlayList = playlistDropDown.SelectedItem as PlaylistModel;
+            savePlaylist(selectedPlayList);
             UnsavedChanges = false;
         }
 
@@ -361,17 +364,17 @@ namespace BSPlaylistEditor
             DialogResult dialog = MessageBox.Show($"Save changes to playlist \"{playlistDropDown.Text}\"?", "Save Changes?", MessageBoxButtons.YesNo);
             if (dialog == DialogResult.Yes)
             {
-                savePlaylist();
+                //Format the selected playlist appropriately
+                PlaylistModel selectedPlayList = playlistDropDown.SelectedItem as PlaylistModel;
+                savePlaylist(selectedPlayList);
                 UnsavedChanges = false;
             }
         }
 
         //Writes the playlist, as displayed, to file and them pushes it via ADB
-        private void savePlaylist()
+        private void savePlaylist(PlaylistModel playlist)
         {
-            //Format the selected playlist appropriately
-            PlaylistModel selectedPlayList = playlistDropDown.SelectedItem as PlaylistModel;
-            log.Info($"Saving changes to \"{selectedPlayList.fileName}\"");
+            log.Info($"Saving changes to \"{playlist.fileName}\"");
             JArray songsJSON = new JArray();
             //Reading the songs from the DataGridView instead of the DataTable preserves sorting
             foreach (DataGridViewRow song in playlistGridView.Rows)
@@ -381,8 +384,8 @@ namespace BSPlaylistEditor
                 songJSON.Add("songName", song.Cells["Song Name"].Value.ToString());
                 songsJSON.Add(songJSON);
             }
-            selectedPlayList.songs = songsJSON;
-            playlistToJson(selectedPlayList);
+            playlist.songs = songsJSON;
+            playlistToJson(playlist);
             //Refresh the playlists
             getAllPlaylists();
         }
@@ -416,8 +419,9 @@ namespace BSPlaylistEditor
         //Check for unsaved playlist changes when changing the selected playlist
         private void playlistDropDown_Click(object sender, EventArgs e)
         {
-            if(UnsavedChanges)
-                discardChangesPrompt();
+            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
+            if (UnsavedChanges)
+                discardChangesPrompt(selectedPlaylist);
         }
 
         //Searches all fields in the All Songs list
@@ -444,25 +448,25 @@ namespace BSPlaylistEditor
 
         private void createNewPlaylist(string playlistTitle, string playlistCoverPath)
         {
-            PlaylistModel playlistModel = new PlaylistModel();
+            PlaylistModel playlist = new PlaylistModel();
             log.Info($"Creating new playlist \"{playlistTitle}\"");
             string fileName = playlistTitle.Replace(" ", "_") + "_BSPlaylistEditor";
-            playlistModel.fileName = fileName + ".json";
-            playlistModel.playlistTitle = playlistTitle;
+            playlist.fileName = fileName + ".json";
+            playlist.playlistTitle = playlistTitle;
             if(playlistCoverPath != null)
             {
                 byte[] imageArray = File.ReadAllBytes(playlistCoverPath);
                 string base64ImageRepresentation = Convert.ToBase64String(imageArray);
-                playlistModel.imageString = base64ImageRepresentation;
+                playlist.imageString = base64ImageRepresentation;
             }
-            allPlaylists.Add(playlistModel);
-            playlistDropDown.Items.Add(playlistModel);
-            playlistDropDown.SelectedItem = playlistModel;
+            allPlaylists.Add(playlist);
+            playlistDropDown.Items.Add(playlist);
+            playlistDropDown.SelectedItem = playlist;
             playlistGridView.DataSource = null;
-            savePlaylist();
+            savePlaylist(playlist);
         }
 
-        private async void refreshPlaylistGrid()
+        private async void updatePlaylistGrid(PlaylistModel selectedPlaylist)
         {
             if (playlistDropDown.Text.Length == 0)
             {
@@ -476,7 +480,6 @@ namespace BSPlaylistEditor
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             playlistProgressBar.Visible = true;
             playlistDropDown.Enabled = false;
-            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
             playlistTable = await Task.Run(() => songsToDataTable(selectedPlaylist));
             playlistCoverPreview.Image = await Task.Run(() => getPlaylistCover(selectedPlaylist)); ;
             playlistGridView.DataSource = playlistTable;
@@ -489,12 +492,12 @@ namespace BSPlaylistEditor
             newPlaylistButton.Visible = true;
         }
 
-        private void discardChangesPrompt()
+        private void discardChangesPrompt(PlaylistModel selectedPlaylist)
         {
             DialogResult dialog = MessageBox.Show($"Discard changes to playlist \"{playlistDropDown.Text}\"?", "Discard Changes?", MessageBoxButtons.YesNo);
             if (dialog == DialogResult.Yes)
             {
-                refreshPlaylistGrid();
+                updatePlaylistGrid(selectedPlaylist);
                 UnsavedChanges = false;
             }
         }
@@ -505,6 +508,7 @@ namespace BSPlaylistEditor
             {
                 PlaylistModel playlist = playlistDropDown.SelectedItem as PlaylistModel;
                 deletePlaylist(playlist);
+                playlistDropDown.SelectedIndex = 0;
             }
         }
 
@@ -514,7 +518,6 @@ namespace BSPlaylistEditor
             deleteFileOverADB(playlistPath);
             allPlaylists.Remove(playlist);
             playlistDropDown.Items.Remove(playlist);
-            refreshPlaylistGrid();
         }
 
         private void deleteFileOverADB(string filePath)
