@@ -441,6 +441,7 @@ namespace BSPlaylistEditor
             allPlaylists.Add(playlistModel);
             playlistDropDown.Items.Add(playlistModel);
             playlistDropDown.SelectedItem = playlistModel;
+            playlistGridView.DataSource = null;
             savePlaylist();
         }
 
