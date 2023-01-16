@@ -53,6 +53,8 @@ namespace BSPlaylistEditor
         {
             string backupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BSPlayistEditorBackups");
             writeConfigValue("backupFolder", backupFolder,false);
+            string tempFolder= Path.Combine(Directory.GetCurrentDirectory(), "temp");
+            writeConfigValue("tempFolder", tempFolder, false);
             log.Info("Starting ADB");
             ADBcontroller.startADB();
             log.Info("Form loaded");
@@ -142,7 +144,7 @@ namespace BSPlaylistEditor
         private string pullFolderContentsFromADB(string folder)
         {
             log.Info($"Pulling folder \"{folder}\" over ADB");
-            string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "temp", Path.GetFileName(folder));
+            string outputFolder = Path.Combine(readConfigValue("tempFolder"), Path.GetFileName(folder));
             if (!Directory.Exists(outputFolder))
                 Directory.CreateDirectory(outputFolder);
             ADBcontroller adb = new ADBcontroller();
@@ -453,9 +455,8 @@ namespace BSPlaylistEditor
             if (UnsavedChanges)
                 savePrompt();
             log.Info("Deleting temporary files");
-            string tempFolder = Path.Combine(Directory.GetCurrentDirectory(), "temp");
-            if (Directory.Exists(tempFolder))
-                Directory.Delete(tempFolder, true);
+            if (Directory.Exists(readConfigValue("tempFolder")))
+                Directory.Delete(readConfigValue("tempFolder"), true);
             log.Info("Stopping ADB");
             ADBcontroller.stopADB();
         }
