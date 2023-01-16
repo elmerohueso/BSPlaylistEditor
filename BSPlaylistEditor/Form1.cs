@@ -71,7 +71,7 @@ namespace BSPlaylistEditor
             adbDevices.RemoveAt(0);
             foreach(string adbDevice in adbDevices)
             {
-                if (adbDevice.StartsWith("1WMHH"))
+                if (adbDevice.StartsWith("1WMHH") || adbDevice.StartsWith("1KWPH"))
                 {
                     if (adbDevice.EndsWith("device"))
                         return true;
