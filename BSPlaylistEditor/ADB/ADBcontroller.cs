@@ -72,6 +72,15 @@ namespace BSPlaylistEditor.ADB
             adb.runCommand();
         }
 
+        //Method to list connected ADB devices
+        public static string adbDevices()
+        {
+            ADBcontroller adb = new ADBcontroller();
+            adb.output = true;
+            adb.command = $"devices";
+            return adb.runCommand();
+        }
+
         public string runCommand()
         {
             string output = "";
@@ -88,7 +97,7 @@ namespace BSPlaylistEditor.ADB
                 process.Start();
                 while (!process.StandardOutput.EndOfStream)
                 {
-                    output += "\n" + process.StandardOutput.ReadLine();
+                    output += process.StandardOutput.ReadLine() + "\n";
                 }
                 process.WaitForExit();
                 return output;

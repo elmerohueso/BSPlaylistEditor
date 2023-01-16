@@ -16,6 +16,7 @@ using BSPlaylistEditor.ADB;
 using System.ComponentModel;
 using System.Drawing;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace BSPlaylistEditor
 {
@@ -48,13 +49,50 @@ namespace BSPlaylistEditor
             InitializeComponent();
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
             string backupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BSPlayistEditorBackups");
             writeConfigValue("backupFolder", backupFolder,false);
             log.Info("Starting ADB");
             ADBcontroller.startADB();
             log.Info("Form loaded");
+            if(isQuestConnected())
+                loadSongs();
+            else
+                refreshAllSongsToolStripMenuItem.Enabled = false;
+            
+        }
+
+        private bool isQuestConnected()
+        {
+            List<string> adbDevices = ADBcontroller.adbDevices().Split(new[] { '\r', '\n' }).ToList();
+            if (adbDevices[0] != "List of devices attached")
+                return false;
+            adbDevices.RemoveAt(0);
+            foreach(string adbDevice in adbDevices)
+            {
+                if (adbDevice.StartsWith("1WMHH"))
+                {
+                    if (adbDevice.EndsWith("device"))
+                        return true;
+                    else
+                    {
+                        DialogResult result = MessageBox.Show("Please authorize the connection on your headset and click \"Retry\".","Not Authorized",MessageBoxButtons.RetryCancel,MessageBoxIcon.Error);
+                        if (result == DialogResult.Retry)
+                            return isQuestConnected();
+                        else
+                            return false;
+                    }
+                }
+            }
+            DialogResult result1 = MessageBox.Show("Please connect your Quest headset and click \"Retry\".", "Quest not found", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+            if (result1 == DialogResult.Retry)
+                return isQuestConnected();
+            return false;
+        }
+
+        private async void loadSongs()
+        {
             //Fetch all custom songs and populate the left grid
             allSongsProgressBar.MarqueeAnimationSpeed = 60;
             allSongsTable = await Task.Run(() => songsToDataTable(null));
@@ -415,7 +453,9 @@ namespace BSPlaylistEditor
             if (UnsavedChanges)
                 savePrompt();
             log.Info("Deleting temporary files");
-            Directory.Delete(Path.Combine(Directory.GetCurrentDirectory(), "temp"), true);
+            string tempFolder = Path.Combine(Directory.GetCurrentDirectory(), "temp");
+            if (Directory.Exists(tempFolder))
+                Directory.Delete(tempFolder, true);
             log.Info("Stopping ADB");
             ADBcontroller.stopADB();
         }
