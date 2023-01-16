@@ -128,6 +128,7 @@
             this.MinimizeBox = false;
             this.Name = "newPlaylistPrompt";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "New Playlist";
             this.Load += new System.EventHandler(this.newPlaylistPrompt_Load);
             ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPicture)).EndInit();

@@ -53,7 +53,7 @@ namespace BSPlaylistEditor
         {
             string backupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BSPlayistEditorBackups");
             writeConfigValue("backupFolder", backupFolder,false);
-            string tempFolder= Path.Combine(Directory.GetCurrentDirectory(), "temp");
+            string tempFolder= Path.Combine(Directory.GetCurrentDirectory(), "BSPlayistEditorTemp");
             writeConfigValue("tempFolder", tempFolder, false);
             log.Info("Starting ADB");
             ADBcontroller.startADB();
@@ -575,17 +575,17 @@ namespace BSPlaylistEditor
             adb.command = $"shell rm \"{filePath}\"";
             adb.runCommand();
         }
-        public void writeConfigValue(string key, string value, bool overwrite)
+        public static void writeConfigValue(string key, string value, bool overwrite)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             if (config.AppSettings.Settings[key] != null && overwrite)
                 config.AppSettings.Settings[key].Value = value;
-            else
+            else if (config.AppSettings.Settings[key] == null)
                 config.AppSettings.Settings.Add(key, value);
             config.Save(ConfigurationSaveMode.Modified);
         }
 
-        public string readConfigValue(string key)
+        public static string readConfigValue(string key)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
             if (config.AppSettings.Settings[key] != null)
@@ -606,6 +606,12 @@ namespace BSPlaylistEditor
                 log.Info($"Backing up playlist \"{playlist.playlistTitle}\" to \"{destination}\"");
                 File.Copy(source, destination, true);
             }
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsDialog settingsWindow = new SettingsDialog();
+            settingsWindow.ShowDialog();
         }
     }
 }
