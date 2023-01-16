@@ -23,10 +23,7 @@ namespace BSPlaylistEditor
     public partial class editorForm : Form
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         private string songLoaderPath = "/sdcard/ModData/com.beatgames.beatsaber/Configs/SongLoader.json"; //Where the SongLoader mod stores the list of custom songs
-        private string devicePlaylistFolder = "/sdcard/ModData/com.beatgames.beatsaber/Mods/PlaylistManager/Playlists"; //Where the PlaylistManager mod stores custom playlist files
-        private string localPlaylistFolder; //Temporary local storage for manipulating playlist files
         private List<SongModel> allSongs = new List<SongModel>(); //List of all custom songs
         private List<PlaylistModel> allPlaylists = new List<PlaylistModel>(); //List of all custom playlists
         private DataTable allSongsTable = new DataTable(); //DataTable to drive the left grid
@@ -58,8 +55,11 @@ namespace BSPlaylistEditor
             log.Info("Starting ADB");
             ADBcontroller.startADB();
             log.Info("Form loaded");
-            if(isQuestConnected())
+            if (isQuestConnected())
+            {
+                killBeatSaber();
                 loadSongs();
+            }
             else
                 refreshAllSongsToolStripMenuItem.Enabled = false;
             
@@ -95,7 +95,24 @@ namespace BSPlaylistEditor
 
         private async void loadSongs()
         {
+            Directory.CreateDirectory(readConfigValue("backupFolder"));
+            Directory.CreateDirectory(readConfigValue("tempFolder"));
+            //Clear the grids
+            searchLabel.Visible = false;
+            searchBox.Visible = false;
+            addSongButton.Enabled = false;
+            removeSongButton.Enabled = false;
+            newPlaylistButton.Visible = false;
+            savePlaylistButton.Visible = false;
+            deletePlaylistButton.Visible = false;
+            playlistDropDown.Enabled = false;
+            playlistDropDown.Items.Clear();
+            allSongsGridView.DataSource = null;
+            playlistGridView.DataSource = null;
+            playlistCoverPreview.Image = null;
+
             //Fetch all custom songs and populate the left grid
+            allSongsProgressBar.Visible = true;
             allSongsProgressBar.MarqueeAnimationSpeed = 60;
             allSongsTable = await Task.Run(() => songsToDataTable(null));
             allSongsGridView.DataSource = allSongsTable;
@@ -107,10 +124,9 @@ namespace BSPlaylistEditor
             searchBox.Visible = true;
 
             //Fetch all custom playlists and populate the right grid with the first playlist
-            playlistDropDown.Visible = true;
             playlistProgressBar.Visible = true;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
-            await Task.Run(() => getPlaylistsFromAdb());
+            await Task.Run(() => parseAllPlaylists());
             foreach (PlaylistModel playlist in allPlaylists)
             {
                 playlistDropDown.Items.Add(playlist);
@@ -130,6 +146,15 @@ namespace BSPlaylistEditor
             deletePlaylistButton.Enabled = true;
         }
 
+        private void killBeatSaber()
+        {
+            log.Info($"Making sure Beat Saber is stopped");
+            ADBcontroller adb = new ADBcontroller();
+            adb.output = false;
+            adb.command = $"shell am force-stop com.beatgames.beatsaber";
+            adb.runCommand();
+        }
+
         //Method to return the contents of a file as a string over ADB
         private string getContentsOfFileFromAdb(string filepath)
         {
@@ -140,18 +165,14 @@ namespace BSPlaylistEditor
             return adb.runCommand();
         }
 
-        //Method to pull an entire folder over ADB into a temporary folder
-        private string pullFolderContentsFromADB(string folder)
+        //Method to pull a specified file over ADB to a specified destination
+        private void pullFileFromADB(string source, string destination)
         {
-            log.Info($"Pulling folder \"{folder}\" over ADB");
-            string outputFolder = Path.Combine(readConfigValue("tempFolder"), Path.GetFileName(folder));
-            if (!Directory.Exists(outputFolder))
-                Directory.CreateDirectory(outputFolder);
+            log.Info($"Pulling \"{source}\" to \"{destination}\" over ADB");
             ADBcontroller adb = new ADBcontroller();
             adb.output = false;
-            adb.command = $"pull \"{folder}\" \"{outputFolder}\"";
+            adb.command = $"pull \"{source}\" \"{destination}\"";
             adb.runCommand();
-            return outputFolder;
         }
 
 
@@ -165,32 +186,27 @@ namespace BSPlaylistEditor
             adb.runCommand();
         }
 
-        //Pull the playlist files locally for easier manipulation
-        private void getPlaylistsFromAdb()
-        {
-            log.Info($"Storing all playlists locally");
-            localPlaylistFolder = pullFolderContentsFromADB(devicePlaylistFolder);
-            parseAllPlaylists();
-        }
-
         //Parse the playlist JSON files into PlaylistModel objects and add them to the list of playlists
         private void parseAllPlaylists()
         {
             log.Info($"Parsing all playlists");
             allPlaylists = new List<PlaylistModel>();
-            DirectoryInfo directoryInfo = new DirectoryInfo(localPlaylistFolder);
-            FileInfo[] playlistFiles = directoryInfo.GetFiles();
-            foreach (FileInfo playlistFile in playlistFiles)
+            string playlistCoreJsonPath = "/sdcard/ModData/com.beatgames.beatsaber/Configs/PlaylistCore.json";
+            JObject playlistCoreJson = JObject.Parse(getContentsOfFileFromAdb(playlistCoreJsonPath));
+            foreach (string playlistPath in playlistCoreJson["order"])
             {
-                JObject playlistJSON = JObject.Parse(File.ReadAllText(playlistFile.FullName, Encoding.Default));
-                PlaylistModel playlistModel = new PlaylistModel();
+                PlaylistModel playlist = new PlaylistModel();
+                playlist.devicePath = playlistPath;
+                playlist.tempPath = Path.Combine(readConfigValue("tempFolder"), Path.GetFileName(playlistPath));
+                log.Info($"Copying \"{playlistPath}\" to temp");
+                pullFileFromADB(playlist.devicePath, playlist.tempPath);
+                JObject playlistJSON = JObject.Parse(File.ReadAllText(playlist.tempPath, Encoding.Default));
                 log.Info($"Parsing playlist \"{playlistJSON["playlistTitle"].ToString()}\"");
-                playlistModel.fileName = playlistFile.Name;
-                playlistModel.playlistTitle = playlistJSON["playlistTitle"].ToString();
-                playlistModel.songs = playlistJSON["songs"] as JArray;
+                    playlist.playlistTitle = playlistJSON["playlistTitle"].ToString();
+                    playlist.songs = playlistJSON["songs"] as JArray;
                 if (playlistJSON["imageString"] != null)
-                    playlistModel.imageString = playlistJSON["imageString"].ToString();
-                allPlaylists.Add(playlistModel);
+                        playlist.imageString = playlistJSON["imageString"].ToString();
+                allPlaylists.Add(playlist);
             }
         }
 
@@ -211,8 +227,7 @@ namespace BSPlaylistEditor
             List<SongModel> songList = new List<SongModel>();
             if (playlist == null)
             {
-                if (allSongs.Count == 0)
-                    getAllSongsFromAdb();
+                getAllSongsFromAdb();
                 songList = allSongs;
             }
             else
@@ -258,6 +273,7 @@ namespace BSPlaylistEditor
         private void getAllSongsFromAdb()
         {
             log.Info("Parsing all custom songs");
+            allSongs = new List<SongModel>();
             JObject songLoader = JObject.Parse(getContentsOfFileFromAdb(songLoaderPath));
             foreach (var song in songLoader)
             {
@@ -414,11 +430,31 @@ namespace BSPlaylistEditor
             }
         }
 
-        //Writes the playlist, as displayed, to file and them pushes it via ADB
-        private void savePlaylist(PlaylistModel playlist)
+        //Toggle UI stuff and run the save processes asynchronously
+        private async void savePlaylist(PlaylistModel playlist)
         {
+            addSongButton.Enabled = false;
+            removeSongButton.Enabled = false;
+            newPlaylistButton.Visible = false;
+            savePlaylistButton.Visible = false;
+            deletePlaylistButton.Visible = false;
+            playlistDropDown.Enabled = false;
+            playlistProgressBar.Visible = true;
+            playlistProgressBar.MarqueeAnimationSpeed = 60;
+            await Task.Run(() => savePlaylistAsyncStuff(playlist));
+            playlistProgressBar.Visible = false;
+            playlistDropDown.Enabled = true;
+            addSongButton.Enabled = true;
+            removeSongButton.Enabled = true;
+            newPlaylistButton.Visible = true;
+            savePlaylistButton.Visible = true;
+            deletePlaylistButton.Visible = true;
+        }
+        //Writes the playlist, as displayed, to file and them pushes it via ADB
+        private void savePlaylistAsyncStuff(PlaylistModel playlist)
+        {            
             backupPlaylist(playlist);
-            log.Info($"Saving changes to \"{playlist.fileName}\"");
+            log.Info($"Saving changes to \"{playlist.playlistTitle}\"");
             JArray songsJSON = new JArray();
             //Reading the songs from the DataGridView instead of the DataTable preserves sorting
             foreach (DataGridViewRow song in playlistGridView.Rows)
@@ -443,8 +479,8 @@ namespace BSPlaylistEditor
                 if (playlist.imageString.Length > 0)
                     playlistJSON.Add("imageString", playlist.imageString);
             //Write the playlist to the local copy and push it to the headset
-            string source = Path.Combine(localPlaylistFolder, playlist.fileName);
-            string destination = devicePlaylistFolder + "/" + playlist.fileName;
+            string source = playlist.tempPath;
+            string destination = playlist.devicePath;
             File.WriteAllText(source, playlistJSON.ToString());
             pushFileToADB(source, destination);
         }
@@ -495,8 +531,9 @@ namespace BSPlaylistEditor
         {
             PlaylistModel playlist = new PlaylistModel();
             log.Info($"Creating new playlist \"{playlistTitle}\"");
-            string fileName = playlistTitle.Replace(" ", "_") + "_BSPlaylistEditor";
-            playlist.fileName = fileName + ".json";
+            string fileName = playlistTitle.Replace(" ", "_") + "_BSPlaylistEditor.json";
+            playlist.devicePath = "/sdcard/ModData/com.beatgames.beatsaber/Mods/PlaylistManager/Playlists/" + fileName;
+            playlist.tempPath = Path.Combine(readConfigValue("tempFolder"), fileName);
             playlist.playlistTitle = playlistTitle;
             if(playlistCoverPath != null)
             {
@@ -509,6 +546,7 @@ namespace BSPlaylistEditor
             playlistDropDown.SelectedItem = playlist;
             playlistGridView.DataSource = null;
             savePlaylist(playlist);
+            updatePlaylistCore();
         }
 
         private async void updatePlaylistGrid(PlaylistModel selectedPlaylist)
@@ -559,12 +597,11 @@ namespace BSPlaylistEditor
 
         private void deletePlaylist(PlaylistModel playlist)
         {
-            string tempPlaylistPath = Path.Combine(localPlaylistFolder, playlist.fileName);
-            File.Delete(tempPlaylistPath);
-            string playlistPath = devicePlaylistFolder + "/" + playlist.fileName;
-            deleteFileOverADB(playlistPath);
+            File.Delete(playlist.tempPath);
+            deleteFileOverADB(playlist.devicePath);
             allPlaylists.Remove(playlist);
             playlistDropDown.Items.Remove(playlist);
+            updatePlaylistCore();
         }
 
         private void deleteFileOverADB(string filePath)
@@ -596,10 +633,9 @@ namespace BSPlaylistEditor
         public void backupPlaylist(PlaylistModel playlist)
         {
             string backupFolder = readConfigValue("backupFolder");
-            Directory.CreateDirectory(backupFolder);
             string timeStamp = DateTime.Now.ToString("_yyyyMMdd_HHmmss");
             string fileName = playlist.playlistTitle.Replace(" ", "_") + "_backup" + timeStamp + ".json";
-            string source = Path.Combine(localPlaylistFolder, playlist.fileName);
+            string source = playlist.tempPath;
             string destination = Path.Combine(backupFolder, fileName);
             if (File.Exists(source))
             {
@@ -611,7 +647,30 @@ namespace BSPlaylistEditor
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SettingsDialog settingsWindow = new SettingsDialog();
-            settingsWindow.ShowDialog();
+            if (settingsWindow.ShowDialog() == DialogResult.OK)
+                loadSongs();
+        }
+
+        private void updatePlaylistCore()
+        {
+            string playlistCoreJsonPath = "/sdcard/ModData/com.beatgames.beatsaber/Configs/PlaylistCore.json";
+            JObject playlistCoreJson = JObject.Parse(getContentsOfFileFromAdb(playlistCoreJsonPath));
+            log.Info("Updating PlaylistCore.json");
+            JArray playlistPaths = new JArray();
+            foreach (PlaylistModel playlist in allPlaylists)
+                playlistPaths.Add(playlist.devicePath);
+            playlistCoreJson["order"] = playlistPaths;
+            //Write the PlaylistCore.json to the local copy and push it to the headset
+            string source = Path.Combine(readConfigValue("tempFolder"), "PlaylistCore.json");
+            string destination = playlistCoreJsonPath;
+            File.WriteAllText(source, playlistCoreJson.ToString());
+            pushFileToADB(source, destination);
+
+        }
+
+        private void refreshAllSongsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            loadSongs();
         }
     }
 }

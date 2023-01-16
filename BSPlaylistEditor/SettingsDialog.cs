@@ -53,6 +53,7 @@ namespace BSPlaylistEditor
                 backupFolder = Path.Combine(backupFolder, "BSPlayistEditorBackups");
             editorForm.writeConfigValue("tempFolder", tempFolder, true);
             editorForm.writeConfigValue("backupFolder", backupFolder, true);
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
     }

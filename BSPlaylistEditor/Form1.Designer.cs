@@ -301,6 +301,7 @@
             this.refreshAllSongsToolStripMenuItem.Name = "refreshAllSongsToolStripMenuItem";
             this.refreshAllSongsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.refreshAllSongsToolStripMenuItem.Text = "Refresh All Songs";
+            this.refreshAllSongsToolStripMenuItem.Click += new System.EventHandler(this.refreshAllSongsToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
