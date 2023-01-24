@@ -87,6 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ADB\ADBcontroller.cs" />
+    <Compile Include="BackupBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BackupBrowser.Designer.cs">
+      <DependentUpon>BackupBrowser.cs</DependentUpon>
+    </Compile>
     <Compile Include="CacheModel.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -110,6 +116,9 @@
       <DependentUpon>SettingsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="SongModel.cs" />
+    <EmbeddedResource Include="BackupBrowser.resx">
+      <DependentUpon>BackupBrowser.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

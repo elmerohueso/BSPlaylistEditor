@@ -16,7 +16,6 @@ namespace BSPlaylistEditor
         public string playlistTitle { get; set; }
         public newPlaylistPrompt()
         {
-            this.StartPosition = FormStartPosition.CenterParent;
             InitializeComponent();
         }
 

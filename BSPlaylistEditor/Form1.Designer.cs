@@ -55,6 +55,7 @@
             this.refreshAllSongsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.browsePlaylistBackupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPreview)).BeginInit();
@@ -291,6 +292,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshAllSongsToolStripMenuItem,
+            this.browsePlaylistBackupsToolStripMenuItem,
             this.settingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -299,20 +301,27 @@
             // refreshAllSongsToolStripMenuItem
             // 
             this.refreshAllSongsToolStripMenuItem.Name = "refreshAllSongsToolStripMenuItem";
-            this.refreshAllSongsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.refreshAllSongsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.refreshAllSongsToolStripMenuItem.Text = "Refresh All Songs";
             this.refreshAllSongsToolStripMenuItem.Click += new System.EventHandler(this.refreshAllSongsToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // songModelBindingSource
             // 
             this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
+            // 
+            // browsePlaylistBackupsToolStripMenuItem
+            // 
+            this.browsePlaylistBackupsToolStripMenuItem.Name = "browsePlaylistBackupsToolStripMenuItem";
+            this.browsePlaylistBackupsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.browsePlaylistBackupsToolStripMenuItem.Text = "Browse Playlist Backups";
+            this.browsePlaylistBackupsToolStripMenuItem.Click += new System.EventHandler(this.browsePlaylistBackupsToolStripMenuItem_Click);
             // 
             // editorForm
             // 
@@ -372,6 +381,7 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshAllSongsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem browsePlaylistBackupsToolStripMenuItem;
     }
 }
 

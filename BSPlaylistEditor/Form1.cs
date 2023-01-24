@@ -22,10 +22,10 @@ namespace BSPlaylistEditor
 {
     public partial class editorForm : Form
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private string songLoaderPath = "/sdcard/ModData/com.beatgames.beatsaber/Configs/SongLoader.json"; //Where the SongLoader mod stores the list of custom songs
-        private List<SongModel> allSongs = new List<SongModel>(); //List of all custom songs
-        private List<PlaylistModel> allPlaylists = new List<PlaylistModel>(); //List of all custom playlists
+        public static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public static string songLoaderPath = "/sdcard/ModData/com.beatgames.beatsaber/Configs/SongLoader.json"; //Where the SongLoader mod stores the list of custom songs
+        public static List<SongModel> allSongs = new List<SongModel>(); //List of all custom songs
+        public static List<PlaylistModel> allPlaylists = new List<PlaylistModel>(); //List of all custom playlists
         private DataTable allSongsTable = new DataTable(); //DataTable to drive the left grid
         private DataTable playlistTable = new DataTable(); //DataTable to drive the right grid
         private bool unsavedChanges = false; //Track whether changes have been made to the selected playlist
@@ -58,11 +58,13 @@ namespace BSPlaylistEditor
             if (isQuestConnected())
             {
                 killBeatSaber();
-                loadSongs();
+                loadSongs(true);
             }
             else
+            {
                 refreshAllSongsToolStripMenuItem.Enabled = false;
-            
+                browsePlaylistBackupsToolStripMenuItem.Enabled=false;
+            }            
         }
 
         private bool isQuestConnected()
@@ -93,37 +95,42 @@ namespace BSPlaylistEditor
             return false;
         }
 
-        private async void loadSongs()
+        private async void loadSongs(bool includeSongs)
         {
             Directory.CreateDirectory(readConfigValue("backupFolder"));
             Directory.CreateDirectory(readConfigValue("tempFolder"));
             //Clear the grids
-            searchLabel.Visible = false;
-            searchBox.Visible = false;
+            
             addSongButton.Enabled = false;
             removeSongButton.Enabled = false;
+            
+
+            if (includeSongs)
+            {
+                //Fetch all custom songs and populate the left grid
+                searchLabel.Visible = false;
+                searchBox.Visible = false;
+                allSongsGridView.DataSource = null;
+                allSongsProgressBar.Visible = true;
+                allSongsProgressBar.MarqueeAnimationSpeed = 60;
+                allSongsTable = await Task.Run(() => songsToDataTable(null));
+                allSongsGridView.DataSource = allSongsTable;
+                allSongsGridView.Columns["songID"].Visible = false;
+                allSongsGridView.Sort(allSongsGridView.Columns["Song Name"], ListSortDirection.Ascending);
+                allSongsProgressBar.MarqueeAnimationSpeed = 0;
+                allSongsProgressBar.Visible = false;
+                searchLabel.Visible = true;
+                searchBox.Visible = true;
+            }
+
+            //Fetch all custom playlists and populate the right grid with the first playlist
             newPlaylistButton.Visible = false;
             savePlaylistButton.Visible = false;
             deletePlaylistButton.Visible = false;
             playlistDropDown.Enabled = false;
             playlistDropDown.Items.Clear();
-            allSongsGridView.DataSource = null;
             playlistGridView.DataSource = null;
             playlistCoverPreview.Image = null;
-
-            //Fetch all custom songs and populate the left grid
-            allSongsProgressBar.Visible = true;
-            allSongsProgressBar.MarqueeAnimationSpeed = 60;
-            allSongsTable = await Task.Run(() => songsToDataTable(null));
-            allSongsGridView.DataSource = allSongsTable;
-            allSongsGridView.Columns["songID"].Visible = false;
-            allSongsGridView.Sort(allSongsGridView.Columns["Song Name"], ListSortDirection.Ascending);
-            allSongsProgressBar.MarqueeAnimationSpeed = 0;
-            allSongsProgressBar.Visible = false;
-            searchLabel.Visible = true;
-            searchBox.Visible = true;
-
-            //Fetch all custom playlists and populate the right grid with the first playlist
             playlistProgressBar.Visible = true;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             await Task.Run(() => parseAllPlaylists());
@@ -132,7 +139,8 @@ namespace BSPlaylistEditor
                 playlistDropDown.Items.Add(playlist);
             }
             playlistDropDown.DisplayMember = "playlistTitle";
-            playlistDropDown.SelectedIndex = 0;
+            if(playlistDropDown.Items.Count > 0)
+                playlistDropDown.SelectedIndex = 0;
             playlistProgressBar.MarqueeAnimationSpeed = 0;
             playlistProgressBar.Visible = false;
             playlistDropDown.Enabled = true;
@@ -156,7 +164,7 @@ namespace BSPlaylistEditor
         }
 
         //Method to return the contents of a file as a string over ADB
-        private string getContentsOfFileFromAdb(string filepath)
+        private static string getContentsOfFileFromAdb(string filepath)
         {
             log.Info($"Getting contents of file \"{filepath}\" from ADB");
             ADBcontroller adb = new ADBcontroller();
@@ -177,7 +185,7 @@ namespace BSPlaylistEditor
 
 
         //Method to push a specified file over ADB to a specified destination
-        private void pushFileToADB(string source, string destination)
+        public static void pushFileToADB(string source, string destination)
         {
             log.Info($"Pushing \"{source}\" to \"{destination}\" over ADB");
             ADBcontroller adb = new ADBcontroller();
@@ -221,7 +229,7 @@ namespace BSPlaylistEditor
         }
 
         //Add songs to DataTables used to populate the grids
-        private DataTable songsToDataTable(PlaylistModel playlist)
+        public static DataTable songsToDataTable(PlaylistModel playlist)
         {
             log.Info($"Preparing songs from \"{playlist}\" to populate the grid");
             List<SongModel> songList = new List<SongModel>();
@@ -270,7 +278,7 @@ namespace BSPlaylistEditor
         //Read the SongLoader.json to get a list of all custom song folders,
         //then parse the info.dat in each of those folders to create SongModel
         //objects and add them to the list of all songs
-        private void getAllSongsFromAdb()
+        private static void getAllSongsFromAdb()
         {
             log.Info("Parsing all custom songs");
             allSongs = new List<SongModel>();
@@ -292,7 +300,7 @@ namespace BSPlaylistEditor
             }
         }
 
-        private List<SongModel> getSongsFromPlaylist(PlaylistModel playlist)
+        public static List<SongModel> getSongsFromPlaylist(PlaylistModel playlist)
         {
             log.Info($"Fetching songs in playlist \"{playlist}\"");
             List<SongModel> songs = new List<SongModel>();
@@ -318,7 +326,7 @@ namespace BSPlaylistEditor
             return songs;
         }
 
-        private Image getPlaylistCover(PlaylistModel playlist)
+        public static Image getPlaylistCover(PlaylistModel playlist)
         {
             log.Info($"Fetching cover from playlist \"{playlist}\"");
             Image playlistCoverImage = null;
@@ -394,7 +402,7 @@ namespace BSPlaylistEditor
         {
             log.Info("Getting selected songs");
             DataGridView gridToUse = new DataGridView();
-             Button senderButton = sender as Button;
+            Button senderButton = sender as Button;
             switch (senderButton.Name)
             {
                 case "addSongButton":
@@ -632,6 +640,8 @@ namespace BSPlaylistEditor
         }
         public void backupPlaylist(PlaylistModel playlist)
         {
+            if (playlist.songs.Count == 0)
+                return; //Don't backup empty playlists
             string backupFolder = readConfigValue("backupFolder");
             string timeStamp = DateTime.Now.ToString("_yyyyMMdd_HHmmss");
             string fileName = playlist.playlistTitle.Replace(" ", "_") + "_backup" + timeStamp + ".json";
@@ -648,10 +658,10 @@ namespace BSPlaylistEditor
         {
             SettingsDialog settingsWindow = new SettingsDialog();
             if (settingsWindow.ShowDialog() == DialogResult.OK)
-                loadSongs();
+                loadSongs(true);
         }
 
-        private void updatePlaylistCore()
+        public static void updatePlaylistCore()
         {
             string playlistCoreJsonPath = "/sdcard/ModData/com.beatgames.beatsaber/Configs/PlaylistCore.json";
             JObject playlistCoreJson = JObject.Parse(getContentsOfFileFromAdb(playlistCoreJsonPath));
@@ -665,12 +675,18 @@ namespace BSPlaylistEditor
             string destination = playlistCoreJsonPath;
             File.WriteAllText(source, playlistCoreJson.ToString());
             pushFileToADB(source, destination);
-
         }
 
         private void refreshAllSongsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            loadSongs();
+            loadSongs(true);
+        }
+
+        private void browsePlaylistBackupsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BackupBrowser backupBrowser = new BackupBrowser();
+            backupBrowser.ShowDialog();
+            loadSongs(false);
         }
     }
 }

@@ -3,6 +3,7 @@
  */
 
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace BSPlaylistEditor
 {
@@ -13,5 +14,6 @@ namespace BSPlaylistEditor
         public string playlistTitle { get; set; } //Name of the playlist
         public JArray songs { get; set; } //List of hash & songName values of songs in the playlist
         public string imageString { get; set; } //Base64 representation of the playlist cover image
+        public DateTime backupDate { get; set; } //Date a backup was made, parsed from the file name
     }
 }
