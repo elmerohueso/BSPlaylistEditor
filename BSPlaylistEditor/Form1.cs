@@ -17,7 +17,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Configuration;
 using System.Diagnostics;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Reflection;
 
 namespace BSPlaylistEditor
 {
@@ -98,7 +98,7 @@ namespace BSPlaylistEditor
 
         private async void loadSongs(bool includeSongs)
         {
-            Directory.CreateDirectory(readConfigValue("backupFolder"));
+            int selectedIndex = playlistDropDown.SelectedIndex;Directory.CreateDirectory(readConfigValue("backupFolder"));
             Directory.CreateDirectory(readConfigValue("tempFolder"));
             //Clear the grids
             newPlaylistButton.Visible = false;
@@ -144,7 +144,10 @@ namespace BSPlaylistEditor
             }
             playlistDropDown.DisplayMember = "playlistTitle";
             if(playlistDropDown.Items.Count > 0)
-                playlistDropDown.SelectedIndex = 0;
+            {
+                selectedIndex = (selectedIndex > 0) ? selectedIndex : 0;
+                playlistDropDown.SelectedIndex = selectedIndex; // return to the previously selected playlist after saving
+            }
             playlistProgressBar.MarqueeAnimationSpeed = 0;
             playlistProgressBar.Visible = false;
             playlistDropDown.Enabled = true;
@@ -240,14 +243,15 @@ namespace BSPlaylistEditor
         {
             if (playlistDropDown.Text.Length == 0)
                 return;
-            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
+            int selectedIndex = playlistDropDown.SelectedIndex;
+            PlaylistModel selectedPlaylist = playlistDropDown.Items[selectedIndex] as PlaylistModel;
+            log.Debug($"sending {selectedPlaylist.playlistTitle} to updatePlaylistGrid");
             updatePlaylistGrid(selectedPlaylist);
         }
 
         //Add songs to DataTables used to populate the grids
         public static DataTable songsToDataTable(PlaylistModel playlist)
         {
-            log.Info($"Preparing songs from \"{playlist}\" to populate the grid");
             List<SongModel> songList = new List<SongModel>();
             if (playlist == null)
             {
@@ -256,6 +260,7 @@ namespace BSPlaylistEditor
             }
             else
             {
+                log.Info($"Preparing songs from \"{playlist.playlistTitle}\" to populate the grid");
                 songList = getSongsFromPlaylist(playlist);
             }
 
@@ -318,7 +323,7 @@ namespace BSPlaylistEditor
 
         public static List<SongModel> getSongsFromPlaylist(PlaylistModel playlist)
         {
-            log.Info($"Fetching songs in playlist \"{playlist}\"");
+            log.Info($"Fetching songs in playlist \"{playlist.playlistTitle}\"");
             List<SongModel> songs = new List<SongModel>();
             if (playlist.songs != null)
             {
@@ -547,7 +552,9 @@ namespace BSPlaylistEditor
                 savePrompt();
             newPlaylistPrompt playlistPrompt = new newPlaylistPrompt();
             if (playlistPrompt.ShowDialog() == DialogResult.OK)
+            {
                 createNewPlaylist(playlistPrompt.playlistTitle, playlistPrompt.playlistCoverPath);
+            }
         }
 
         private void createNewPlaylist(string playlistTitle, string playlistCoverPath)
@@ -564,16 +571,18 @@ namespace BSPlaylistEditor
                 string base64ImageRepresentation = Convert.ToBase64String(imageArray);
                 playlist.imageString = base64ImageRepresentation;
             }
+            playlistDropDown.Enabled = false;
             allPlaylists.Add(playlist);
             playlistDropDown.Items.Add(playlist);
-            playlistDropDown.SelectedItem = playlist;
             playlistGridView.DataSource = null;
             savePlaylist(playlist);
             updatePlaylistCore();
+            playlistDropDown.SelectedIndex = playlistDropDown.Items.Count - 1;
         }
 
         private async void updatePlaylistGrid(PlaylistModel selectedPlaylist)
         {
+            log.Debug($"updatePlaylistGrid received playlist \"{selectedPlaylist.playlistTitle}\"");
             if (playlistDropDown.Text.Length == 0)
             {
                 playlistGridView.DataSource = null;
