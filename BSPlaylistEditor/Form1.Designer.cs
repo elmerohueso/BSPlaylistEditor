@@ -57,6 +57,9 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeCoverButton = new System.Windows.Forms.Button();
             this.browseCoverDialog = new System.Windows.Forms.OpenFileDialog();
+            this.playlistUpButton = new System.Windows.Forms.Button();
+            this.playlistDownButton = new System.Windows.Forms.Button();
+            this.movePlaylistLabel = new System.Windows.Forms.Label();
             this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
@@ -336,6 +339,38 @@
             // 
             this.browseCoverDialog.Filter = "PNG Graphic|*.png";
             // 
+            // playlistUpButton
+            // 
+            this.playlistUpButton.Enabled = false;
+            this.playlistUpButton.Location = new System.Drawing.Point(813, 217);
+            this.playlistUpButton.Name = "playlistUpButton";
+            this.playlistUpButton.Size = new System.Drawing.Size(33, 23);
+            this.playlistUpButton.TabIndex = 18;
+            this.playlistUpButton.Text = "↑";
+            this.playlistUpButton.UseVisualStyleBackColor = true;
+            this.playlistUpButton.Click += new System.EventHandler(this.playlistUpButton_Click);
+            // 
+            // playlistDownButton
+            // 
+            this.playlistDownButton.Enabled = false;
+            this.playlistDownButton.Location = new System.Drawing.Point(813, 246);
+            this.playlistDownButton.Name = "playlistDownButton";
+            this.playlistDownButton.Size = new System.Drawing.Size(33, 23);
+            this.playlistDownButton.TabIndex = 19;
+            this.playlistDownButton.Text = "↓";
+            this.playlistDownButton.UseVisualStyleBackColor = true;
+            this.playlistDownButton.Click += new System.EventHandler(this.playlistDownButton_Click);
+            // 
+            // movePlaylistLabel
+            // 
+            this.movePlaylistLabel.AutoSize = true;
+            this.movePlaylistLabel.Enabled = false;
+            this.movePlaylistLabel.Location = new System.Drawing.Point(796, 201);
+            this.movePlaylistLabel.Name = "movePlaylistLabel";
+            this.movePlaylistLabel.Size = new System.Drawing.Size(69, 13);
+            this.movePlaylistLabel.TabIndex = 20;
+            this.movePlaylistLabel.Text = "Move Playlist";
+            // 
             // songModelBindingSource
             // 
             this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
@@ -345,6 +380,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(897, 473);
+            this.Controls.Add(this.movePlaylistLabel);
+            this.Controls.Add(this.playlistDownButton);
+            this.Controls.Add(this.playlistUpButton);
             this.Controls.Add(this.changeCoverButton);
             this.Controls.Add(this.deletePlaylistButton);
             this.Controls.Add(this.playlistCoverPreview);
@@ -402,6 +440,9 @@
         private System.Windows.Forms.ToolStripMenuItem browsePlaylistBackupsToolStripMenuItem;
         private System.Windows.Forms.Button changeCoverButton;
         private System.Windows.Forms.OpenFileDialog browseCoverDialog;
+        private System.Windows.Forms.Button playlistUpButton;
+        private System.Windows.Forms.Button playlistDownButton;
+        private System.Windows.Forms.Label movePlaylistLabel;
     }
 }
 

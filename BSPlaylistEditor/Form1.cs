@@ -101,9 +101,19 @@ namespace BSPlaylistEditor
             Directory.CreateDirectory(readConfigValue("backupFolder"));
             Directory.CreateDirectory(readConfigValue("tempFolder"));
             //Clear the grids
-            
+            newPlaylistButton.Visible = false;
+            savePlaylistButton.Visible = false;
+            deletePlaylistButton.Visible = false;
+            playlistDropDown.Enabled = false;
+            playlistDropDown.Items.Clear();
+            playlistGridView.DataSource = null;
+            playlistCoverPreview.Image = null;
             addSongButton.Enabled = false;
             removeSongButton.Enabled = false;
+            changeCoverButton.Enabled = false;
+            movePlaylistLabel.Enabled = false;
+            playlistDownButton.Enabled = false;
+            playlistUpButton.Enabled = false;
             
 
             if (includeSongs)
@@ -125,13 +135,6 @@ namespace BSPlaylistEditor
             }
 
             //Fetch all custom playlists and populate the right grid with the first playlist
-            newPlaylistButton.Visible = false;
-            savePlaylistButton.Visible = false;
-            deletePlaylistButton.Visible = false;
-            playlistDropDown.Enabled = false;
-            playlistDropDown.Items.Clear();
-            playlistGridView.DataSource = null;
-            playlistCoverPreview.Image = null;
             playlistProgressBar.Visible = true;
             playlistProgressBar.MarqueeAnimationSpeed = 60;
             await Task.Run(() => parseAllPlaylists());
@@ -153,6 +156,10 @@ namespace BSPlaylistEditor
             savePlaylistButton.Enabled = false;
             deletePlaylistButton.Visible = true;
             deletePlaylistButton.Enabled = true;
+            changeCoverButton.Enabled = true;
+            movePlaylistLabel.Enabled = true;
+            playlistDownButton.Enabled = true;
+            playlistUpButton.Enabled = true;
         }
 
         private void killBeatSaber()
@@ -565,6 +572,9 @@ namespace BSPlaylistEditor
                 playlistCoverPreview.Image = null;
                 return;
             }
+            movePlaylistLabel.Enabled = false;
+            playlistUpButton.Enabled = false;
+            playlistDownButton.Enabled = false;
             changeCoverButton.Enabled = false;
             savePlaylistButton.Visible = false;
             deletePlaylistButton.Visible = false;
@@ -583,6 +593,12 @@ namespace BSPlaylistEditor
             deletePlaylistButton.Visible = true;
             newPlaylistButton.Visible = true;
             changeCoverButton.Enabled = true;
+            if(playlistDropDown.Items.Count > 1)
+            {
+                movePlaylistLabel.Enabled = true;
+                playlistUpButton.Enabled = true;
+                playlistDownButton.Enabled = true;
+            }
         }
 
         private void discardChangesPrompt(PlaylistModel selectedPlaylist)
@@ -709,6 +725,34 @@ namespace BSPlaylistEditor
                 selectedPlayList.imageString = base64ImageRepresentation;
                 UnsavedChanges = true;
             }
+        }
+
+        private void movePlaylist(object sender)
+        {
+            int selectedItemIndex = playlistDropDown.SelectedIndex;
+            int newIndex = selectedItemIndex;
+            PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
+            playlistDropDown.Items.Remove(selectedPlaylist);
+            allPlaylists.Remove(selectedPlaylist);
+            Button senderButton = sender as Button;
+            if (senderButton.Name == "playlistUpButton" && selectedItemIndex != 0)
+                newIndex --;
+            else if (senderButton.Name == "playlistDownButton" && selectedItemIndex != playlistDropDown.Items.Count - 1)
+                newIndex ++;
+            playlistDropDown.Items.Insert(newIndex, selectedPlaylist);
+            allPlaylists.Insert(newIndex, selectedPlaylist);
+            playlistDropDown.SelectedIndex = newIndex;
+            updatePlaylistCore();
+        }
+
+        private void playlistUpButton_Click(object sender, EventArgs e)
+        {
+            movePlaylist(sender);
+        }
+
+        private void playlistDownButton_Click(object sender, EventArgs e)
+        {
+            movePlaylist(sender);
         }
     }
 }
