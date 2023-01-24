@@ -14,7 +14,7 @@ Allows basic management of custom Beat Saber playlists for the Quest and Quest 2
 - Change playlist covers
 - Change order of playlists
 - Automatic playlist backups (playlists are backed up locally whenever they are updated)
-- View and retore playlist backups
+- View and restore playlist backups
 
 ## Requirements
 - Windows with .Net 4.6 or newer
