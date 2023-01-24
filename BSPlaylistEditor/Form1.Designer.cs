@@ -53,9 +53,11 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshAllSongsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.browsePlaylistBackupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.changeCoverButton = new System.Windows.Forms.Button();
+            this.browseCoverDialog = new System.Windows.Forms.OpenFileDialog();
+            this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPreview)).BeginInit();
@@ -305,17 +307,6 @@
             this.refreshAllSongsToolStripMenuItem.Text = "Refresh All Songs";
             this.refreshAllSongsToolStripMenuItem.Click += new System.EventHandler(this.refreshAllSongsToolStripMenuItem_Click);
             // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
-            // 
-            // songModelBindingSource
-            // 
-            this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
-            // 
             // browsePlaylistBackupsToolStripMenuItem
             // 
             this.browsePlaylistBackupsToolStripMenuItem.Name = "browsePlaylistBackupsToolStripMenuItem";
@@ -323,11 +314,38 @@
             this.browsePlaylistBackupsToolStripMenuItem.Text = "Browse Playlist Backups";
             this.browsePlaylistBackupsToolStripMenuItem.Click += new System.EventHandler(this.browsePlaylistBackupsToolStripMenuItem_Click);
             // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            // 
+            // changeCoverButton
+            // 
+            this.changeCoverButton.Enabled = false;
+            this.changeCoverButton.Location = new System.Drawing.Point(783, 152);
+            this.changeCoverButton.Name = "changeCoverButton";
+            this.changeCoverButton.Size = new System.Drawing.Size(100, 23);
+            this.changeCoverButton.TabIndex = 17;
+            this.changeCoverButton.Text = "Change Cover";
+            this.changeCoverButton.UseVisualStyleBackColor = true;
+            this.changeCoverButton.Click += new System.EventHandler(this.changeCoverButton_Click);
+            // 
+            // browseCoverDialog
+            // 
+            this.browseCoverDialog.Filter = "PNG Graphic|*.png";
+            // 
+            // songModelBindingSource
+            // 
+            this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
+            // 
             // editorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(897, 473);
+            this.Controls.Add(this.changeCoverButton);
             this.Controls.Add(this.deletePlaylistButton);
             this.Controls.Add(this.playlistCoverPreview);
             this.Controls.Add(this.newPlaylistButton);
@@ -382,6 +400,8 @@
         private System.Windows.Forms.ToolStripMenuItem refreshAllSongsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem browsePlaylistBackupsToolStripMenuItem;
+        private System.Windows.Forms.Button changeCoverButton;
+        private System.Windows.Forms.OpenFileDialog browseCoverDialog;
     }
 }
 

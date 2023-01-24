@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Configuration;
 using System.Diagnostics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace BSPlaylistEditor
 {
@@ -457,6 +458,7 @@ namespace BSPlaylistEditor
             newPlaylistButton.Visible = true;
             savePlaylistButton.Visible = true;
             deletePlaylistButton.Visible = true;
+            loadSongs(false);
         }
         //Writes the playlist, as displayed, to file and them pushes it via ADB
         private void savePlaylistAsyncStuff(PlaylistModel playlist)
@@ -474,8 +476,6 @@ namespace BSPlaylistEditor
             }
             playlist.songs = songsJSON;
             playlistToJson(playlist);
-            //Refresh the playlists
-            parseAllPlaylists();
         }
 
         private void playlistToJson(PlaylistModel playlist)
@@ -565,6 +565,7 @@ namespace BSPlaylistEditor
                 playlistCoverPreview.Image = null;
                 return;
             }
+            changeCoverButton.Enabled = false;
             savePlaylistButton.Visible = false;
             deletePlaylistButton.Visible = false;
             newPlaylistButton.Visible=false;
@@ -581,6 +582,7 @@ namespace BSPlaylistEditor
             savePlaylistButton.Visible = true;
             deletePlaylistButton.Visible = true;
             newPlaylistButton.Visible = true;
+            changeCoverButton.Enabled = true;
         }
 
         private void discardChangesPrompt(PlaylistModel selectedPlaylist)
@@ -656,6 +658,8 @@ namespace BSPlaylistEditor
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (UnsavedChanges)
+                savePrompt();
             SettingsDialog settingsWindow = new SettingsDialog();
             if (settingsWindow.ShowDialog() == DialogResult.OK)
                 loadSongs(true);
@@ -679,14 +683,32 @@ namespace BSPlaylistEditor
 
         private void refreshAllSongsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (UnsavedChanges)
+                savePrompt();
             loadSongs(true);
         }
 
         private void browsePlaylistBackupsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (UnsavedChanges)
+                savePrompt();
             BackupBrowser backupBrowser = new BackupBrowser();
             backupBrowser.ShowDialog();
             loadSongs(false);
+        }
+
+        private void changeCoverButton_Click(object sender, EventArgs e)
+        {
+            if (browseCoverDialog.ShowDialog() == DialogResult.OK)
+            {
+                string playlistCoverPath = browseCoverDialog.FileName;
+                playlistCoverPreview.Image = Image.FromFile(playlistCoverPath);
+                PlaylistModel selectedPlayList = playlistDropDown.SelectedItem as PlaylistModel;
+                byte[] imageArray = File.ReadAllBytes(playlistCoverPath);
+                string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+                selectedPlayList.imageString = base64ImageRepresentation;
+                UnsavedChanges = true;
+            }
         }
     }
 }
