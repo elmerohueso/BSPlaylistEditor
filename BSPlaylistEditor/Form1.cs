@@ -216,13 +216,21 @@ namespace BSPlaylistEditor
                 playlist.tempPath = Path.Combine(readConfigValue("tempFolder"), Path.GetFileName(playlistPath));
                 log.Info($"Copying \"{playlistPath}\" to temp");
                 pullFileFromADB(playlist.devicePath, playlist.tempPath);
-                JObject playlistJSON = JObject.Parse(File.ReadAllText(playlist.tempPath, Encoding.Default));
-                log.Info($"Parsing playlist \"{playlistJSON["playlistTitle"].ToString()}\"");
+                try
+                {
+                    log.Info($"Parsing \"{playlist.tempPath}\"");
+                    JObject playlistJSON = JObject.Parse(File.ReadAllText(playlist.tempPath, Encoding.Default));
+                    log.Info($"Parsing playlist \"{playlistJSON["playlistTitle"].ToString()}\"");
                     playlist.playlistTitle = playlistJSON["playlistTitle"].ToString();
                     playlist.songs = playlistJSON["songs"] as JArray;
-                if (playlistJSON["imageString"] != null)
+                    if (playlistJSON["imageString"] != null)
                         playlist.imageString = playlistJSON["imageString"].ToString();
-                allPlaylists.Add(playlist);
+                    allPlaylists.Add(playlist);
+                }
+                catch(Exception ex)
+                {
+                    log.Error($"Error parsing \"{playlist.tempPath}\": {ex}");
+                }
             }
         }
 
@@ -658,7 +666,7 @@ namespace BSPlaylistEditor
         }
         public void backupPlaylist(PlaylistModel playlist)
         {
-            if (playlist.songs.Count == 0)
+            if (playlist.songs == null || playlist.songs.Count == 0)
                 return; //Don't backup empty playlists
             string backupFolder = readConfigValue("backupFolder");
             string timeStamp = DateTime.Now.ToString("_yyyyMMdd_HHmmss");
@@ -732,13 +740,19 @@ namespace BSPlaylistEditor
             int selectedItemIndex = playlistDropDown.SelectedIndex;
             int newIndex = selectedItemIndex;
             PlaylistModel selectedPlaylist = playlistDropDown.SelectedItem as PlaylistModel;
-            playlistDropDown.Items.Remove(selectedPlaylist);
-            allPlaylists.Remove(selectedPlaylist);
             Button senderButton = sender as Button;
             if (senderButton.Name == "playlistUpButton" && selectedItemIndex != 0)
-                newIndex --;
+            {
+                log.Info($"Moving playlist \"{selectedPlaylist.playlistTitle}\" up.");
+                newIndex--;
+            }
             else if (senderButton.Name == "playlistDownButton" && selectedItemIndex != playlistDropDown.Items.Count - 1)
-                newIndex ++;
+            {
+                log.Info($"Moving playlist \"{selectedPlaylist.playlistTitle}\" down.");
+                newIndex++;
+            }
+            playlistDropDown.Items.Remove(selectedPlaylist);
+            allPlaylists.Remove(selectedPlaylist);
             playlistDropDown.Items.Insert(newIndex, selectedPlaylist);
             allPlaylists.Insert(newIndex, selectedPlaylist);
             playlistDropDown.SelectedIndex = newIndex;
