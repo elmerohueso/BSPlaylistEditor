@@ -18,12 +18,13 @@ using System.Drawing;
 using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace BSPlaylistEditor
 {
     public partial class editorForm : Form
     {
-        public static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public static readonly log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static string songLoaderPath = "/sdcard/ModData/com.beatgames.beatsaber/Configs/SongLoader.json"; //Where the SongLoader mod stores the list of custom songs
         public static List<SongModel> allSongs = new List<SongModel>(); //List of all custom songs
         public static List<PlaylistModel> allPlaylists = new List<PlaylistModel>(); //List of all custom playlists
@@ -53,6 +54,7 @@ namespace BSPlaylistEditor
             writeConfigValue("backupFolder", backupFolder,false);
             string tempFolder= Path.Combine(Directory.GetCurrentDirectory(), "BSPlayistEditorTemp");
             writeConfigValue("tempFolder", tempFolder, false);
+            //parseDat(@"D:\Users\Brendan\Downloads\b514 (GAS GAS GAS - KyleT) (1)\b514 (GAS GAS GAS - KyleT)\info.dat");
             log.Info("Starting ADB");
             ADBcontroller.startADB();
             log.Info("Form loaded");
@@ -178,10 +180,44 @@ namespace BSPlaylistEditor
         private static string getContentsOfFileFromAdb(string filepath)
         {
             log.Info($"Getting contents of file \"{filepath}\" from ADB");
+            filepath = escapeChars(filepath);
             ADBcontroller adb = new ADBcontroller();
             adb.output = true;
             adb.command = $"shell cat \"{filepath}\"";
-            return adb.runCommand();
+            string output = adb.runCommand();
+            log.Debug($"Contents of file \"{filepath}\":\n{output}");
+            return output;
+        }
+
+        private static string escapeChars(string input)
+        {
+            string output = "";
+            // Characters to escape in paths for ADB commands
+            List<char> charsToEscape = new List<char>()
+            {
+                '(',
+                ')',
+                '<',
+                '>',
+                '|',
+                ';',
+                '&',
+                '*',
+                '\\',
+                '~',
+                '"',
+                '\'',
+                ' ',
+                '#'
+            };
+            foreach (char c in input)
+            {
+                if(charsToEscape.Contains(c))
+                    output = output + "\\" + c;
+                else
+                    output = output + c;
+            }
+            return output;            
         }
 
         //Method to pull a specified file over ADB to a specified destination
@@ -255,6 +291,7 @@ namespace BSPlaylistEditor
             List<SongModel> songList = new List<SongModel>();
             if (playlist == null)
             {
+                log.Info($"Preparing all songs to populate the grid");
                 getAllSongsFromAdb();
                 songList = allSongs;
             }
@@ -296,6 +333,48 @@ namespace BSPlaylistEditor
             return table;
         }
 
+        private static void parseDat(string path)
+        {
+            log.Info($"Testing with {path}");
+            string songFolder = Path.GetDirectoryName(path);
+            string infoPath = songFolder + "/info.dat";
+            try
+            {
+                string datString = File.ReadAllText(path);
+                JObject songJSON = JObject.Parse(datString);
+                SongModel songModel = new SongModel();
+                songModel.folderName = songFolder;
+                //songModel.songID = song.Value["sha1"].ToString();
+                string _songName = songJSON["_songName"].ToString();
+                log.Debug($"_songName: {_songName}");
+                songModel.songName = _songName;
+                if (songJSON["_songSubName"] != null)
+                {
+                    string _songSubName = songJSON["_songSubName"].ToString();
+                    log.Debug($"_songSubName: {_songSubName}");
+                    songModel.songSubName = _songSubName;
+                }
+                if (songJSON["_songAuthorName"] != null)
+                {
+                    string _songAuthorName = songJSON["_songAuthorName"].ToString();
+                    log.Debug($"_songAuthorName: {_songAuthorName}");
+                    songModel.songAuthorName = _songAuthorName;
+                }
+                if (songJSON["_levelAuthorName"] != null)
+                {
+                    string _levelAuthorName = songJSON["_levelAuthorName"].ToString();
+                    log.Debug($"_levelAuthorName: {_levelAuthorName}");
+                    songModel.levelAuthorName = _levelAuthorName;
+                }
+                allSongs.Add(songModel);
+            }
+            catch (Exception ex)
+            {
+                log.Error($"Couldn't parse \"{infoPath}\" with error: {ex.ToString()}");
+            }
+            
+        }
+
         //Read the SongLoader.json to get a list of all custom song folders,
         //then parse the info.dat in each of those folders to create SongModel
         //objects and add them to the list of all songs
@@ -308,16 +387,26 @@ namespace BSPlaylistEditor
             {
                 string songFolder = song.Key;
                 string infoPath = songFolder + "/info.dat";
-                JObject songJSON = JObject.Parse(getContentsOfFileFromAdb(infoPath));
-                SongModel songModel = new SongModel();
-                songModel.folderName = songFolder;
-                songModel.songID = song.Value["sha1"].ToString();
-                songModel.songName = songJSON["_songName"].ToString();
-                songModel.songSubName = songJSON["_songSubName"].ToString();
-                songModel.songAuthorName = songJSON["_songAuthorName"].ToString();
-                songModel.levelAuthorName = songJSON["_levelAuthorName"].ToString();
-                log.Info($"Found \"{songModel.songName}\" at {songModel.folderName}");
-                allSongs.Add(songModel);
+                try
+                {
+                    JObject songJSON = JObject.Parse(getContentsOfFileFromAdb(infoPath));
+                    SongModel songModel = new SongModel();
+                    songModel.folderName = songFolder;
+                    songModel.songID = song.Value["sha1"].ToString();
+                    songModel.songName = songJSON["_songName"].ToString();
+                    if (songJSON["_songSubName"] != null)
+                        songModel.songSubName = songJSON["_songSubName"].ToString();
+                    if (songJSON["_songAuthorName"] != null)
+                        songModel.songAuthorName = songJSON["_songAuthorName"].ToString();
+                    if (songJSON["_levelAuthorName"] != null)
+                        songModel.levelAuthorName = songJSON["_levelAuthorName"].ToString();
+                    log.Info($"Found \"{songModel.songName}\" at {songModel.folderName}");
+                    allSongs.Add(songModel);
+                }
+                catch(Exception ex)
+                {
+                    log.Error($"Couldn't parse \"{infoPath}\" with error: {ex.ToString()}");
+                }
             }
         }
 

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BSPlaylistEditor.ADB
 {
@@ -20,19 +21,26 @@ namespace BSPlaylistEditor.ADB
         public bool output { get; set; } = false; //Whether or not to return the output of the command
         
         //Checks if adb.exe exists, and will extract the bundled one if it doesn't
-        public static void extractADB()
+        public static void extractResources()
+        {
+            extractResource("adb.exe");
+            extractResource("AdbWinApi.dll");
+            extractResource("AdbWinUsbApi.dll");
+        }
+        public static void extractResource(string filename)
         {
             string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "resources");
-            string outputFile = Path.Combine(outputFolder, "adb.exe");
+            string outputFile = Path.Combine(outputFolder, filename);
             if (File.Exists(outputFile))
             {
-                Trace.WriteLine("adb.exe found. Will use existing copy.");
-                adbPath = outputFile;
+                Trace.WriteLine($"{filename} found. Will use existing copy.");
+                if(filename == "adb.exe")
+                    adbPath = outputFile;
                 return;
             }
-            Trace.WriteLine("adb.exe not found. Extracting included copy.");
+            Trace.WriteLine($"{filename} not found. Extracting included copy.");
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string adbResourcePath = assembly.GetManifestResourceNames().Where(x => x.EndsWith("adb.exe")).FirstOrDefault();
+            string adbResourcePath = assembly.GetManifestResourceNames().Where(x => x.EndsWith(filename)).FirstOrDefault();
             Stream adbData = assembly.GetManifestResourceStream(adbResourcePath);
             try
             {
@@ -42,7 +50,8 @@ namespace BSPlaylistEditor.ADB
                 {
                     adbData.CopyTo(outputFileStream);
                 }
-                adbPath = outputFile;
+                if (filename == "adb.exe")
+                    adbPath = outputFile;
                 return;
             }
             catch(Exception e)
@@ -56,7 +65,7 @@ namespace BSPlaylistEditor.ADB
         {
             //Make sure adb.exe exists before starting it
             if (adbPath == "")
-                extractADB();
+                extractResources();
             ADBcontroller adb = new ADBcontroller();
             adb.output = false;
             adb.command = $"start-server";
