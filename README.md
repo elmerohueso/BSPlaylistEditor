@@ -6,13 +6,13 @@ Allows basic management of custom Beat Saber playlists for the Quest and Quest 2
 - View all custom songs on your device
 - Sort and search your custom songs
 - View all custom playlists on your device
-- Create new custom playlists
-- Delete custom playlists
-- View custom playlist images
 - Add and remove songs from your playlists (supports multi-selection)
 - Change sorting order of songs in your playlists
-- Change playlist covers
-- Change order of playlists
+- Create new custom playlists
+- Delete custom playlists
+- View custom playlist covers
+- Change custom playlist covers
+- Change order of custom playlists
 - Automatic playlist backups (playlists are backed up locally whenever they are updated)
 - View and restore playlist backups
 
