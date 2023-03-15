@@ -2,7 +2,7 @@
  * Class to define the properties of a SongModel object
  */
 
-namespace BSPlaylistEditor
+namespace BSPlaylistEditor.Models
 {
     public class SongModel
     {

@@ -43,33 +43,37 @@
             // playlistTitleLabel
             // 
             this.playlistTitleLabel.AutoSize = true;
-            this.playlistTitleLabel.Location = new System.Drawing.Point(13, 13);
+            this.playlistTitleLabel.Location = new System.Drawing.Point(17, 16);
+            this.playlistTitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.playlistTitleLabel.Name = "playlistTitleLabel";
-            this.playlistTitleLabel.Size = new System.Drawing.Size(27, 13);
+            this.playlistTitleLabel.Size = new System.Drawing.Size(33, 16);
             this.playlistTitleLabel.TabIndex = 0;
             this.playlistTitleLabel.Text = "Title";
             // 
             // playlistTitleBox
             // 
-            this.playlistTitleBox.Location = new System.Drawing.Point(16, 30);
+            this.playlistTitleBox.Location = new System.Drawing.Point(21, 37);
+            this.playlistTitleBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.playlistTitleBox.Name = "playlistTitleBox";
-            this.playlistTitleBox.Size = new System.Drawing.Size(146, 20);
+            this.playlistTitleBox.Size = new System.Drawing.Size(193, 22);
             this.playlistTitleBox.TabIndex = 0;
             // 
             // playlistCoverLabel
             // 
             this.playlistCoverLabel.AutoSize = true;
-            this.playlistCoverLabel.Location = new System.Drawing.Point(169, 13);
+            this.playlistCoverLabel.Location = new System.Drawing.Point(225, 16);
+            this.playlistCoverLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.playlistCoverLabel.Name = "playlistCoverLabel";
-            this.playlistCoverLabel.Size = new System.Drawing.Size(35, 13);
+            this.playlistCoverLabel.Size = new System.Drawing.Size(43, 16);
             this.playlistCoverLabel.TabIndex = 2;
             this.playlistCoverLabel.Text = "Cover";
             // 
             // savePlaylistButton
             // 
-            this.savePlaylistButton.Location = new System.Drawing.Point(194, 136);
+            this.savePlaylistButton.Location = new System.Drawing.Point(259, 167);
+            this.savePlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.savePlaylistButton.Name = "savePlaylistButton";
-            this.savePlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.savePlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.savePlaylistButton.TabIndex = 4;
             this.savePlaylistButton.Text = "Save";
             this.savePlaylistButton.UseVisualStyleBackColor = true;
@@ -77,9 +81,10 @@
             // 
             // cancelPlaylistButton
             // 
-            this.cancelPlaylistButton.Location = new System.Drawing.Point(113, 136);
+            this.cancelPlaylistButton.Location = new System.Drawing.Point(151, 167);
+            this.cancelPlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cancelPlaylistButton.Name = "cancelPlaylistButton";
-            this.cancelPlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelPlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.cancelPlaylistButton.TabIndex = 5;
             this.cancelPlaylistButton.Text = "Cancel";
             this.cancelPlaylistButton.UseVisualStyleBackColor = true;
@@ -87,13 +92,14 @@
             // 
             // browseCoverDialog
             // 
-            this.browseCoverDialog.Filter = "PNG Graphic|*.png";
+            this.browseCoverDialog.Filter = "Image Files(*.JPG;*.PNG)|*.JPG;*.PNG";
             // 
             // playlistCoverBrowseButton
             // 
-            this.playlistCoverBrowseButton.Location = new System.Drawing.Point(72, 56);
+            this.playlistCoverBrowseButton.Location = new System.Drawing.Point(96, 69);
+            this.playlistCoverBrowseButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.playlistCoverBrowseButton.Name = "playlistCoverBrowseButton";
-            this.playlistCoverBrowseButton.Size = new System.Drawing.Size(90, 23);
+            this.playlistCoverBrowseButton.Size = new System.Drawing.Size(120, 28);
             this.playlistCoverBrowseButton.TabIndex = 1;
             this.playlistCoverBrowseButton.Text = "Browse Cover...";
             this.playlistCoverBrowseButton.UseVisualStyleBackColor = true;
@@ -102,18 +108,18 @@
             // playlistCoverPicture
             // 
             this.playlistCoverPicture.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.playlistCoverPicture.Location = new System.Drawing.Point(172, 29);
+            this.playlistCoverPicture.Location = new System.Drawing.Point(229, 36);
+            this.playlistCoverPicture.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.playlistCoverPicture.Name = "playlistCoverPicture";
-            this.playlistCoverPicture.Size = new System.Drawing.Size(100, 100);
+            this.playlistCoverPicture.Size = new System.Drawing.Size(132, 122);
             this.playlistCoverPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.playlistCoverPicture.TabIndex = 6;
             this.playlistCoverPicture.TabStop = false;
             // 
             // newPlaylistPrompt
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(275, 164);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.ClientSize = new System.Drawing.Size(367, 202);
             this.ControlBox = false;
             this.Controls.Add(this.playlistCoverPicture);
             this.Controls.Add(this.playlistCoverBrowseButton);
@@ -124,6 +130,7 @@
             this.Controls.Add(this.playlistTitleLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "newPlaylistPrompt";

@@ -19,6 +19,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using BSPlaylistEditor.Models;
 
 namespace BSPlaylistEditor
 {
@@ -54,7 +55,6 @@ namespace BSPlaylistEditor
             writeConfigValue("backupFolder", backupFolder,false);
             string tempFolder= Path.Combine(Directory.GetCurrentDirectory(), "BSPlayistEditorTemp");
             writeConfigValue("tempFolder", tempFolder, false);
-            //parseDat(@"D:\Users\Brendan\Downloads\b514 (GAS GAS GAS - KyleT) (1)\b514 (GAS GAS GAS - KyleT)\info.dat");
             log.Info("Starting ADB");
             ADBcontroller.startADB();
             log.Info("Form loaded");
@@ -221,7 +221,7 @@ namespace BSPlaylistEditor
         }
 
         //Method to pull a specified file over ADB to a specified destination
-        private void pullFileFromADB(string source, string destination)
+        private static void pullFileFromADB(string source, string destination)
         {
             log.Info($"Pulling \"{source}\" to \"{destination}\" over ADB");
             ADBcontroller adb = new ADBcontroller();
@@ -374,6 +374,19 @@ namespace BSPlaylistEditor
             }
             
         }
+        private static void pushSongLoaderJSON()
+        {
+            string tempFolder = readConfigValue("tempFolder");
+            string source = Path.Combine(tempFolder, "SongLoader.json");
+            pullFileFromADB(source, songLoaderPath);
+        }
+        private static string pullSongLoaderJSON()
+        {
+            string tempFolder = readConfigValue("tempFolder");
+            string destination = Path.Combine(tempFolder, "SongLoader.json");
+            pullFileFromADB(songLoaderPath, destination);
+            return destination;
+        }
 
         //Read the SongLoader.json to get a list of all custom song folders,
         //then parse the info.dat in each of those folders to create SongModel
@@ -447,38 +460,6 @@ namespace BSPlaylistEditor
                 playlistCoverImage = Image.FromStream(memoryStream);
             }
             return playlistCoverImage;
-        }
-
-        //This method isn't currently used, but can be used to generate the SHA1 hash for a custom song
-        private string generateSongHash(DirectoryInfo songFolder)
-        {
-            string hashHex = "";
-            string infoPath = Path.Combine(songFolder.FullName, "Info.dat");
-            JObject infoJSON = JObject.Parse(File.ReadAllText(infoPath));
-            List<string> filesToHash = new List<string>();
-            filesToHash.Add(infoPath);
-            string dataToHash = "";
-
-            foreach(JObject difficultyBeatMapSet in infoJSON["_difficultyBeatmapSets"])
-            {
-                foreach (JObject difficultyBeatMap in difficultyBeatMapSet["_difficultyBeatmaps"])
-                {
-                    string beatMapPath = Path.Combine(songFolder.FullName, difficultyBeatMap["_beatmapFilename"].ToString());
-                    if(File.Exists(beatMapPath))
-                        filesToHash.Add(beatMapPath);
-                }
-            }
-            foreach(string file in filesToHash)
-            {
-                dataToHash += File.ReadAllText(file);
-            }
-            byte[] UTF8Bytes = Encoding.UTF8.GetBytes(dataToHash);
-            byte[] hashBytes = new SHA1Managed().ComputeHash(UTF8Bytes);
-            foreach (byte b in hashBytes)
-            {
-                hashHex += b.ToString("X2");
-            }
-            return hashHex;
         }
 
         //Controls adding songs to a playlist
@@ -865,6 +846,15 @@ namespace BSPlaylistEditor
         private void playlistDownButton_Click(object sender, EventArgs e)
         {
             movePlaylist(sender);
+        }
+
+        private void uploadSongsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (UnsavedChanges)
+                savePrompt();
+            UploadDialog uploadWindow = new UploadDialog();
+            if (uploadWindow.ShowDialog() == DialogResult.OK)
+                loadSongs(true);
         }
     }
 }

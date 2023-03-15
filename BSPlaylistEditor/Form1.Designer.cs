@@ -1,4 +1,6 @@
-﻿namespace BSPlaylistEditor
+﻿using BSPlaylistEditor.Models;
+
+namespace BSPlaylistEditor
 {
     partial class editorForm
     {
@@ -61,6 +63,7 @@
             this.playlistDownButton = new System.Windows.Forms.Button();
             this.movePlaylistLabel = new System.Windows.Forms.Label();
             this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.uploadSongsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPreview)).BeginInit();
@@ -73,21 +76,21 @@
             this.playlistDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.playlistDropDown.Enabled = false;
             this.playlistDropDown.FormattingEnabled = true;
-            this.playlistDropDown.Location = new System.Drawing.Point(427, 21);
-            this.playlistDropDown.Margin = new System.Windows.Forms.Padding(2);
+            this.playlistDropDown.Location = new System.Drawing.Point(569, 26);
+            this.playlistDropDown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.playlistDropDown.Name = "playlistDropDown";
-            this.playlistDropDown.Size = new System.Drawing.Size(166, 21);
+            this.playlistDropDown.Size = new System.Drawing.Size(220, 24);
             this.playlistDropDown.TabIndex = 2;
             this.playlistDropDown.SelectedIndexChanged += new System.EventHandler(this.playlistDropDown_SelectedIndexChanged);
             this.playlistDropDown.Click += new System.EventHandler(this.playlistDropDown_Click);
             // 
             // allSongsProgressBar
             // 
-            this.allSongsProgressBar.Location = new System.Drawing.Point(125, 21);
-            this.allSongsProgressBar.Margin = new System.Windows.Forms.Padding(2);
+            this.allSongsProgressBar.Location = new System.Drawing.Point(167, 26);
+            this.allSongsProgressBar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.allSongsProgressBar.MarqueeAnimationSpeed = 0;
             this.allSongsProgressBar.Name = "allSongsProgressBar";
-            this.allSongsProgressBar.Size = new System.Drawing.Size(235, 20);
+            this.allSongsProgressBar.Size = new System.Drawing.Size(313, 25);
             this.allSongsProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.allSongsProgressBar.TabIndex = 3;
             // 
@@ -115,8 +118,8 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.allSongsGridView.DefaultCellStyle = dataGridViewCellStyle2;
-            this.allSongsGridView.Location = new System.Drawing.Point(10, 46);
-            this.allSongsGridView.Margin = new System.Windows.Forms.Padding(2);
+            this.allSongsGridView.Location = new System.Drawing.Point(13, 57);
+            this.allSongsGridView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.allSongsGridView.Name = "allSongsGridView";
             this.allSongsGridView.ReadOnly = true;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -128,9 +131,10 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.allSongsGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.allSongsGridView.RowHeadersVisible = false;
+            this.allSongsGridView.RowHeadersWidth = 51;
             this.allSongsGridView.RowTemplate.Height = 24;
             this.allSongsGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.allSongsGridView.Size = new System.Drawing.Size(350, 411);
+            this.allSongsGridView.Size = new System.Drawing.Size(467, 506);
             this.allSongsGridView.TabIndex = 4;
             // 
             // playlistGridView
@@ -157,8 +161,8 @@
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.playlistGridView.DefaultCellStyle = dataGridViewCellStyle5;
-            this.playlistGridView.Location = new System.Drawing.Point(427, 46);
-            this.playlistGridView.Margin = new System.Windows.Forms.Padding(2);
+            this.playlistGridView.Location = new System.Drawing.Point(569, 57);
+            this.playlistGridView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.playlistGridView.Name = "playlistGridView";
             this.playlistGridView.ReadOnly = true;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -170,28 +174,30 @@
             dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.playlistGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.playlistGridView.RowHeadersVisible = false;
+            this.playlistGridView.RowHeadersWidth = 51;
             this.playlistGridView.RowTemplate.Height = 24;
             this.playlistGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.playlistGridView.Size = new System.Drawing.Size(350, 411);
+            this.playlistGridView.Size = new System.Drawing.Size(467, 506);
             this.playlistGridView.TabIndex = 5;
             this.playlistGridView.Sorted += new System.EventHandler(this.playlistGridView_Sorted);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 24);
+            this.label1.Location = new System.Drawing.Point(16, 30);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 13);
+            this.label1.Size = new System.Drawing.Size(112, 16);
             this.label1.TabIndex = 6;
             this.label1.Text = "All Custom Songs";
             // 
             // playlistProgressBar
             // 
-            this.playlistProgressBar.Location = new System.Drawing.Point(597, 21);
-            this.playlistProgressBar.Margin = new System.Windows.Forms.Padding(2);
+            this.playlistProgressBar.Location = new System.Drawing.Point(796, 26);
+            this.playlistProgressBar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.playlistProgressBar.MarqueeAnimationSpeed = 0;
             this.playlistProgressBar.Name = "playlistProgressBar";
-            this.playlistProgressBar.Size = new System.Drawing.Size(93, 20);
+            this.playlistProgressBar.Size = new System.Drawing.Size(124, 25);
             this.playlistProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.playlistProgressBar.TabIndex = 7;
             this.playlistProgressBar.Visible = false;
@@ -199,9 +205,10 @@
             // addSongButton
             // 
             this.addSongButton.Enabled = false;
-            this.addSongButton.Location = new System.Drawing.Point(366, 150);
+            this.addSongButton.Location = new System.Drawing.Point(488, 185);
+            this.addSongButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.addSongButton.Name = "addSongButton";
-            this.addSongButton.Size = new System.Drawing.Size(56, 23);
+            this.addSongButton.Size = new System.Drawing.Size(75, 28);
             this.addSongButton.TabIndex = 8;
             this.addSongButton.Text = ">>>>>";
             this.addSongButton.UseVisualStyleBackColor = true;
@@ -210,9 +217,10 @@
             // removeSongButton
             // 
             this.removeSongButton.Enabled = false;
-            this.removeSongButton.Location = new System.Drawing.Point(365, 179);
+            this.removeSongButton.Location = new System.Drawing.Point(487, 220);
+            this.removeSongButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.removeSongButton.Name = "removeSongButton";
-            this.removeSongButton.Size = new System.Drawing.Size(57, 23);
+            this.removeSongButton.Size = new System.Drawing.Size(76, 28);
             this.removeSongButton.TabIndex = 9;
             this.removeSongButton.Text = "<<<<<";
             this.removeSongButton.UseVisualStyleBackColor = true;
@@ -221,9 +229,10 @@
             // savePlaylistButton
             // 
             this.savePlaylistButton.Enabled = false;
-            this.savePlaylistButton.Location = new System.Drawing.Point(679, 19);
+            this.savePlaylistButton.Location = new System.Drawing.Point(905, 23);
+            this.savePlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.savePlaylistButton.Name = "savePlaylistButton";
-            this.savePlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.savePlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.savePlaylistButton.TabIndex = 10;
             this.savePlaylistButton.Text = "Save";
             this.savePlaylistButton.UseVisualStyleBackColor = true;
@@ -232,9 +241,10 @@
             // 
             // searchBox
             // 
-            this.searchBox.Location = new System.Drawing.Point(209, 21);
+            this.searchBox.Location = new System.Drawing.Point(279, 26);
+            this.searchBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.searchBox.Name = "searchBox";
-            this.searchBox.Size = new System.Drawing.Size(151, 20);
+            this.searchBox.Size = new System.Drawing.Size(200, 22);
             this.searchBox.TabIndex = 11;
             this.searchBox.Visible = false;
             this.searchBox.TextChanged += new System.EventHandler(this.searchBox_TextChanged);
@@ -242,9 +252,10 @@
             // searchLabel
             // 
             this.searchLabel.AutoSize = true;
-            this.searchLabel.Location = new System.Drawing.Point(162, 24);
+            this.searchLabel.Location = new System.Drawing.Point(216, 30);
+            this.searchLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.searchLabel.Name = "searchLabel";
-            this.searchLabel.Size = new System.Drawing.Size(41, 13);
+            this.searchLabel.Size = new System.Drawing.Size(50, 16);
             this.searchLabel.TabIndex = 12;
             this.searchLabel.Text = "Search";
             this.searchLabel.Visible = false;
@@ -252,9 +263,10 @@
             // newPlaylistButton
             // 
             this.newPlaylistButton.Enabled = false;
-            this.newPlaylistButton.Location = new System.Drawing.Point(760, 19);
+            this.newPlaylistButton.Location = new System.Drawing.Point(1013, 23);
+            this.newPlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.newPlaylistButton.Name = "newPlaylistButton";
-            this.newPlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.newPlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.newPlaylistButton.TabIndex = 13;
             this.newPlaylistButton.Text = "New";
             this.newPlaylistButton.UseVisualStyleBackColor = true;
@@ -264,9 +276,10 @@
             // playlistCoverPreview
             // 
             this.playlistCoverPreview.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.playlistCoverPreview.Location = new System.Drawing.Point(783, 46);
+            this.playlistCoverPreview.Location = new System.Drawing.Point(1044, 57);
+            this.playlistCoverPreview.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.playlistCoverPreview.Name = "playlistCoverPreview";
-            this.playlistCoverPreview.Size = new System.Drawing.Size(100, 100);
+            this.playlistCoverPreview.Size = new System.Drawing.Size(132, 122);
             this.playlistCoverPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.playlistCoverPreview.TabIndex = 14;
             this.playlistCoverPreview.TabStop = false;
@@ -274,9 +287,10 @@
             // deletePlaylistButton
             // 
             this.deletePlaylistButton.Enabled = false;
-            this.deletePlaylistButton.Location = new System.Drawing.Point(598, 19);
+            this.deletePlaylistButton.Location = new System.Drawing.Point(797, 23);
+            this.deletePlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.deletePlaylistButton.Name = "deletePlaylistButton";
-            this.deletePlaylistButton.Size = new System.Drawing.Size(75, 23);
+            this.deletePlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.deletePlaylistButton.TabIndex = 15;
             this.deletePlaylistButton.Text = "Delete";
             this.deletePlaylistButton.UseVisualStyleBackColor = true;
@@ -285,11 +299,12 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(897, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1196, 28);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -298,38 +313,40 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshAllSongsToolStripMenuItem,
             this.browsePlaylistBackupsToolStripMenuItem,
+            this.uploadSongsToolStripMenuItem,
             this.settingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // refreshAllSongsToolStripMenuItem
             // 
             this.refreshAllSongsToolStripMenuItem.Name = "refreshAllSongsToolStripMenuItem";
-            this.refreshAllSongsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.refreshAllSongsToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
             this.refreshAllSongsToolStripMenuItem.Text = "Refresh All Songs";
             this.refreshAllSongsToolStripMenuItem.Click += new System.EventHandler(this.refreshAllSongsToolStripMenuItem_Click);
             // 
             // browsePlaylistBackupsToolStripMenuItem
             // 
             this.browsePlaylistBackupsToolStripMenuItem.Name = "browsePlaylistBackupsToolStripMenuItem";
-            this.browsePlaylistBackupsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.browsePlaylistBackupsToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
             this.browsePlaylistBackupsToolStripMenuItem.Text = "Browse Playlist Backups";
             this.browsePlaylistBackupsToolStripMenuItem.Click += new System.EventHandler(this.browsePlaylistBackupsToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // changeCoverButton
             // 
             this.changeCoverButton.Enabled = false;
-            this.changeCoverButton.Location = new System.Drawing.Point(783, 152);
+            this.changeCoverButton.Location = new System.Drawing.Point(1044, 187);
+            this.changeCoverButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.changeCoverButton.Name = "changeCoverButton";
-            this.changeCoverButton.Size = new System.Drawing.Size(100, 23);
+            this.changeCoverButton.Size = new System.Drawing.Size(133, 28);
             this.changeCoverButton.TabIndex = 17;
             this.changeCoverButton.Text = "Change Cover";
             this.changeCoverButton.UseVisualStyleBackColor = true;
@@ -342,9 +359,10 @@
             // playlistUpButton
             // 
             this.playlistUpButton.Enabled = false;
-            this.playlistUpButton.Location = new System.Drawing.Point(813, 217);
+            this.playlistUpButton.Location = new System.Drawing.Point(1084, 267);
+            this.playlistUpButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.playlistUpButton.Name = "playlistUpButton";
-            this.playlistUpButton.Size = new System.Drawing.Size(33, 23);
+            this.playlistUpButton.Size = new System.Drawing.Size(44, 28);
             this.playlistUpButton.TabIndex = 18;
             this.playlistUpButton.Text = "↑";
             this.playlistUpButton.UseVisualStyleBackColor = true;
@@ -353,9 +371,10 @@
             // playlistDownButton
             // 
             this.playlistDownButton.Enabled = false;
-            this.playlistDownButton.Location = new System.Drawing.Point(813, 246);
+            this.playlistDownButton.Location = new System.Drawing.Point(1084, 303);
+            this.playlistDownButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.playlistDownButton.Name = "playlistDownButton";
-            this.playlistDownButton.Size = new System.Drawing.Size(33, 23);
+            this.playlistDownButton.Size = new System.Drawing.Size(44, 28);
             this.playlistDownButton.TabIndex = 19;
             this.playlistDownButton.Text = "↓";
             this.playlistDownButton.UseVisualStyleBackColor = true;
@@ -365,21 +384,29 @@
             // 
             this.movePlaylistLabel.AutoSize = true;
             this.movePlaylistLabel.Enabled = false;
-            this.movePlaylistLabel.Location = new System.Drawing.Point(796, 201);
+            this.movePlaylistLabel.Location = new System.Drawing.Point(1061, 247);
+            this.movePlaylistLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.movePlaylistLabel.Name = "movePlaylistLabel";
-            this.movePlaylistLabel.Size = new System.Drawing.Size(69, 13);
+            this.movePlaylistLabel.Size = new System.Drawing.Size(87, 16);
             this.movePlaylistLabel.TabIndex = 20;
             this.movePlaylistLabel.Text = "Move Playlist";
             // 
             // songModelBindingSource
             // 
-            this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.SongModel);
+            this.songModelBindingSource.DataSource = typeof(SongModel);
+            // 
+            // uploadSongsToolStripMenuItem
+            // 
+            this.uploadSongsToolStripMenuItem.Name = "uploadSongsToolStripMenuItem";
+            this.uploadSongsToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.uploadSongsToolStripMenuItem.Text = "Upload Songs";
+            this.uploadSongsToolStripMenuItem.Click += new System.EventHandler(this.uploadSongsToolStripMenuItem_Click);
             // 
             // editorForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(897, 473);
+            this.ClientSize = new System.Drawing.Size(1196, 582);
             this.Controls.Add(this.movePlaylistLabel);
             this.Controls.Add(this.playlistDownButton);
             this.Controls.Add(this.playlistUpButton);
@@ -401,7 +428,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "editorForm";
             this.Text = "Simple Playlist Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -443,6 +470,7 @@
         private System.Windows.Forms.Button playlistUpButton;
         private System.Windows.Forms.Button playlistDownButton;
         private System.Windows.Forms.Label movePlaylistLabel;
+        private System.Windows.Forms.ToolStripMenuItem uploadSongsToolStripMenuItem;
     }
 }
 

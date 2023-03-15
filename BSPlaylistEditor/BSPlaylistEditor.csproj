@@ -74,6 +74,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -100,13 +101,14 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\SongLoaderModel.cs" />
     <Compile Include="newPlaylistPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="newPlaylistPrompt.Designer.cs">
       <DependentUpon>newPlaylistPrompt.cs</DependentUpon>
     </Compile>
-    <Compile Include="PlaylistModel.cs" />
+    <Compile Include="Models\PlaylistModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsDialog.cs">
@@ -115,7 +117,13 @@
     <Compile Include="SettingsDialog.Designer.cs">
       <DependentUpon>SettingsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="SongModel.cs" />
+    <Compile Include="Models\SongModel.cs" />
+    <Compile Include="UploadDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UploadDialog.Designer.cs">
+      <DependentUpon>UploadDialog.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="BackupBrowser.resx">
       <DependentUpon>BackupBrowser.cs</DependentUpon>
     </EmbeddedResource>
@@ -136,6 +144,9 @@
     </Compile>
     <EmbeddedResource Include="SettingsDialog.resx">
       <DependentUpon>SettingsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UploadDialog.resx">
+      <DependentUpon>UploadDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App1.config" />
     <None Include="BSPlaylistEditor_TemporaryKey.pfx" />

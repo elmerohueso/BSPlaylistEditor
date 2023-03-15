@@ -5,7 +5,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 
-namespace BSPlaylistEditor
+namespace BSPlaylistEditor.Models
 {
     public class PlaylistModel
     {
