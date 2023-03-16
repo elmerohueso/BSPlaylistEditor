@@ -56,6 +56,7 @@ namespace BSPlaylistEditor
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshAllSongsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.browsePlaylistBackupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uploadSongsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeCoverButton = new System.Windows.Forms.Button();
             this.browseCoverDialog = new System.Windows.Forms.OpenFileDialog();
@@ -63,7 +64,6 @@ namespace BSPlaylistEditor
             this.playlistDownButton = new System.Windows.Forms.Button();
             this.movePlaylistLabel = new System.Windows.Forms.Label();
             this.songModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.uploadSongsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.allSongsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playlistCoverPreview)).BeginInit();
@@ -187,7 +187,7 @@ namespace BSPlaylistEditor
             this.label1.Location = new System.Drawing.Point(16, 30);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 16);
+            this.label1.Size = new System.Drawing.Size(103, 15);
             this.label1.TabIndex = 6;
             this.label1.Text = "All Custom Songs";
             // 
@@ -206,7 +206,7 @@ namespace BSPlaylistEditor
             // 
             this.addSongButton.Enabled = false;
             this.addSongButton.Location = new System.Drawing.Point(488, 185);
-            this.addSongButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.addSongButton.Margin = new System.Windows.Forms.Padding(4);
             this.addSongButton.Name = "addSongButton";
             this.addSongButton.Size = new System.Drawing.Size(75, 28);
             this.addSongButton.TabIndex = 8;
@@ -218,7 +218,7 @@ namespace BSPlaylistEditor
             // 
             this.removeSongButton.Enabled = false;
             this.removeSongButton.Location = new System.Drawing.Point(487, 220);
-            this.removeSongButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.removeSongButton.Margin = new System.Windows.Forms.Padding(4);
             this.removeSongButton.Name = "removeSongButton";
             this.removeSongButton.Size = new System.Drawing.Size(76, 28);
             this.removeSongButton.TabIndex = 9;
@@ -230,7 +230,7 @@ namespace BSPlaylistEditor
             // 
             this.savePlaylistButton.Enabled = false;
             this.savePlaylistButton.Location = new System.Drawing.Point(905, 23);
-            this.savePlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.savePlaylistButton.Margin = new System.Windows.Forms.Padding(4);
             this.savePlaylistButton.Name = "savePlaylistButton";
             this.savePlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.savePlaylistButton.TabIndex = 10;
@@ -242,9 +242,9 @@ namespace BSPlaylistEditor
             // searchBox
             // 
             this.searchBox.Location = new System.Drawing.Point(279, 26);
-            this.searchBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.searchBox.Margin = new System.Windows.Forms.Padding(4);
             this.searchBox.Name = "searchBox";
-            this.searchBox.Size = new System.Drawing.Size(200, 22);
+            this.searchBox.Size = new System.Drawing.Size(200, 20);
             this.searchBox.TabIndex = 11;
             this.searchBox.Visible = false;
             this.searchBox.TextChanged += new System.EventHandler(this.searchBox_TextChanged);
@@ -255,7 +255,7 @@ namespace BSPlaylistEditor
             this.searchLabel.Location = new System.Drawing.Point(216, 30);
             this.searchLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.searchLabel.Name = "searchLabel";
-            this.searchLabel.Size = new System.Drawing.Size(50, 16);
+            this.searchLabel.Size = new System.Drawing.Size(46, 15);
             this.searchLabel.TabIndex = 12;
             this.searchLabel.Text = "Search";
             this.searchLabel.Visible = false;
@@ -264,7 +264,7 @@ namespace BSPlaylistEditor
             // 
             this.newPlaylistButton.Enabled = false;
             this.newPlaylistButton.Location = new System.Drawing.Point(1013, 23);
-            this.newPlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.newPlaylistButton.Margin = new System.Windows.Forms.Padding(4);
             this.newPlaylistButton.Name = "newPlaylistButton";
             this.newPlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.newPlaylistButton.TabIndex = 13;
@@ -277,7 +277,7 @@ namespace BSPlaylistEditor
             // 
             this.playlistCoverPreview.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.playlistCoverPreview.Location = new System.Drawing.Point(1044, 57);
-            this.playlistCoverPreview.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.playlistCoverPreview.Margin = new System.Windows.Forms.Padding(4);
             this.playlistCoverPreview.Name = "playlistCoverPreview";
             this.playlistCoverPreview.Size = new System.Drawing.Size(132, 122);
             this.playlistCoverPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -288,7 +288,7 @@ namespace BSPlaylistEditor
             // 
             this.deletePlaylistButton.Enabled = false;
             this.deletePlaylistButton.Location = new System.Drawing.Point(797, 23);
-            this.deletePlaylistButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.deletePlaylistButton.Margin = new System.Windows.Forms.Padding(4);
             this.deletePlaylistButton.Name = "deletePlaylistButton";
             this.deletePlaylistButton.Size = new System.Drawing.Size(100, 28);
             this.deletePlaylistButton.TabIndex = 15;
@@ -304,7 +304,7 @@ namespace BSPlaylistEditor
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1196, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1196, 30);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -316,7 +316,7 @@ namespace BSPlaylistEditor
             this.uploadSongsToolStripMenuItem,
             this.settingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // refreshAllSongsToolStripMenuItem
@@ -333,6 +333,13 @@ namespace BSPlaylistEditor
             this.browsePlaylistBackupsToolStripMenuItem.Text = "Browse Playlist Backups";
             this.browsePlaylistBackupsToolStripMenuItem.Click += new System.EventHandler(this.browsePlaylistBackupsToolStripMenuItem_Click);
             // 
+            // uploadSongsToolStripMenuItem
+            // 
+            this.uploadSongsToolStripMenuItem.Name = "uploadSongsToolStripMenuItem";
+            this.uploadSongsToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.uploadSongsToolStripMenuItem.Text = "Upload Songs";
+            this.uploadSongsToolStripMenuItem.Click += new System.EventHandler(this.uploadSongsToolStripMenuItem_Click);
+            // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
@@ -344,7 +351,7 @@ namespace BSPlaylistEditor
             // 
             this.changeCoverButton.Enabled = false;
             this.changeCoverButton.Location = new System.Drawing.Point(1044, 187);
-            this.changeCoverButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.changeCoverButton.Margin = new System.Windows.Forms.Padding(4);
             this.changeCoverButton.Name = "changeCoverButton";
             this.changeCoverButton.Size = new System.Drawing.Size(133, 28);
             this.changeCoverButton.TabIndex = 17;
@@ -354,13 +361,13 @@ namespace BSPlaylistEditor
             // 
             // browseCoverDialog
             // 
-            this.browseCoverDialog.Filter = "PNG Graphic|*.png";
+            this.browseCoverDialog.Filter = "Image Files(*.JPG;*.PNG)|*.JPG;*.PNG";
             // 
             // playlistUpButton
             // 
             this.playlistUpButton.Enabled = false;
             this.playlistUpButton.Location = new System.Drawing.Point(1084, 267);
-            this.playlistUpButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.playlistUpButton.Margin = new System.Windows.Forms.Padding(4);
             this.playlistUpButton.Name = "playlistUpButton";
             this.playlistUpButton.Size = new System.Drawing.Size(44, 28);
             this.playlistUpButton.TabIndex = 18;
@@ -372,7 +379,7 @@ namespace BSPlaylistEditor
             // 
             this.playlistDownButton.Enabled = false;
             this.playlistDownButton.Location = new System.Drawing.Point(1084, 303);
-            this.playlistDownButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.playlistDownButton.Margin = new System.Windows.Forms.Padding(4);
             this.playlistDownButton.Name = "playlistDownButton";
             this.playlistDownButton.Size = new System.Drawing.Size(44, 28);
             this.playlistDownButton.TabIndex = 19;
@@ -387,20 +394,13 @@ namespace BSPlaylistEditor
             this.movePlaylistLabel.Location = new System.Drawing.Point(1061, 247);
             this.movePlaylistLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.movePlaylistLabel.Name = "movePlaylistLabel";
-            this.movePlaylistLabel.Size = new System.Drawing.Size(87, 16);
+            this.movePlaylistLabel.Size = new System.Drawing.Size(78, 15);
             this.movePlaylistLabel.TabIndex = 20;
             this.movePlaylistLabel.Text = "Move Playlist";
             // 
             // songModelBindingSource
             // 
-            this.songModelBindingSource.DataSource = typeof(SongModel);
-            // 
-            // uploadSongsToolStripMenuItem
-            // 
-            this.uploadSongsToolStripMenuItem.Name = "uploadSongsToolStripMenuItem";
-            this.uploadSongsToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
-            this.uploadSongsToolStripMenuItem.Text = "Upload Songs";
-            this.uploadSongsToolStripMenuItem.Click += new System.EventHandler(this.uploadSongsToolStripMenuItem_Click);
+            this.songModelBindingSource.DataSource = typeof(BSPlaylistEditor.Models.SongModel);
             // 
             // editorForm
             // 
