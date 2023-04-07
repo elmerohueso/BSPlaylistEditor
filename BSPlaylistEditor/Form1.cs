@@ -67,6 +67,7 @@ namespace BSPlaylistEditor
             {
                 refreshAllSongsToolStripMenuItem.Enabled = false;
                 browsePlaylistBackupsToolStripMenuItem.Enabled=false;
+                uploadSongsToolStripMenuItem.Enabled = false;
             }            
         }
 
@@ -374,13 +375,13 @@ namespace BSPlaylistEditor
             }
             
         }
-        private static void pushSongLoaderJSON()
+        internal static void pushSongLoaderJSON()
         {
             string tempFolder = readConfigValue("tempFolder");
             string source = Path.Combine(tempFolder, "SongLoader.json");
-            pullFileFromADB(source, songLoaderPath);
+            pushFileToADB(source, songLoaderPath);
         }
-        private static string pullSongLoaderJSON()
+        internal static string pullSongLoaderJSON()
         {
             string tempFolder = readConfigValue("tempFolder");
             string destination = Path.Combine(tempFolder, "SongLoader.json");
@@ -853,7 +854,8 @@ namespace BSPlaylistEditor
             if (UnsavedChanges)
                 savePrompt();
             UploadDialog uploadWindow = new UploadDialog();
-            if (uploadWindow.ShowDialog() == DialogResult.OK)
+            // Refresh the song list after uploading song
+            if (uploadWindow.ShowDialog() == DialogResult.Cancel && uploadWindow.uploadedCount > 0)
                 loadSongs(true);
         }
     }

@@ -73,7 +73,7 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(378, 124);
+            this.ClientSize = new System.Drawing.Size(374, 120);
             this.ControlBox = false;
             this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.dropZone);
